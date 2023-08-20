@@ -70,7 +70,7 @@ class AvailabilityFile:
                 if curr_day <= len(self.day_index_arr) - 1 and i >= self.day_index_arr[curr_day]: # using day index array gets the correct day offset for corresponding day
                     day_offset += 1
                     curr_day += 1
-                if pd.isnull(item) == False: # if its NaT which is what pandas makes stuff when it wont convert to datetime, then do nothing
+                if pd.isnull(item) == True: # if its NaT which is what pandas makes stuff when it wont convert to datetime, then do nothing
                     tmp_list2.append(item)
                     continue
                 tmp_list2.append(item + pd.DateOffset(days=day_offset)) #append the current item to a tmp list, but with the addition of the curr day offset
