@@ -2,6 +2,8 @@ import config
 from AvailabilityFile import AvailabilityFile
 from GroupPriorityFile import GroupPriorityFile
 from ComboHolder import ComboHolder
+from SetFinder import SetFinder
+from EasyAvailability import EasyAvailability
 
 import pandas as pd
 
@@ -15,3 +17,11 @@ combo_obj = ComboHolder(config.team_size,config.number_of_teams,pri_obj.group1,p
 combo_obj.createCombos()
 combo_obj.createSets()
 
+easyAvail_obj = EasyAvailability(avail_obj)
+easyAvail_obj.generateDictionary()
+
+# setFinder_obj = SetFinder(combo_obj,avail_obj)
+# setFinder_obj.findGoodSets(config.minHoursOverlap,config.minDaysOverlap)
+# setFinder_obj.drawGoodSets()
+
+# print(f"\n\nthe matrix: {avail_obj.name_avail_matrix}\n\nthen the names array:\n{avail_obj.names}")
