@@ -34,7 +34,7 @@ def drawAvailMatrix(matrix):
 
 class AvailabilityFile:
     filename = str
-    names = list
+    names = list #parallel to the matrix
     name_avail_matrix = list(list()) #as a matrix -> row lines up with the person, col with day of week
     day_index_arr = list()
 
@@ -64,12 +64,13 @@ class AvailabilityFile:
             curr_day = 0
             day_offset = -1
             i = 0
+            #below can be optimized found solution on stack overflow, use strftime('%H:%M').tolist()")
             for item in tmp_list: #have to do this cus without this loop the types are weird, this makes a list of timestamp/NaT types if cant be converted
                 i += 1 #starting at one cus the name gets added later and i wanna account for that so it is parallel with the dictionary
                 if curr_day <= len(self.day_index_arr) - 1 and i >= self.day_index_arr[curr_day]: # using day index array gets the correct day offset for corresponding day
                     day_offset += 1
                     curr_day += 1
-                if item == "NaT": # if its NaT which is what pandas makes stuff when it wont convert to datetime, then do nothing
+                if pd.isnull(item) == False: # if its NaT which is what pandas makes stuff when it wont convert to datetime, then do nothing
                     tmp_list2.append(item)
                     continue
                 tmp_list2.append(item + pd.DateOffset(days=day_offset)) #append the current item to a tmp list, but with the addition of the curr day offset
