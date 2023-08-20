@@ -1,6 +1,7 @@
 from AvailabilityFile import AvailabilityFile
 
 import pandas as pd
+import datetime as dtime
 
 
 def drawDictionary(dic):
@@ -15,6 +16,7 @@ by creating a dictionary, where the key is the name of the person, and the value
 error checking: if start times not equal to end times"""
 class EasyAvailability:
     keyName_valStartTimeEndTimeParallelArrs = dict()
+    keyName_valAvailableMinutes = dict()
     availFile_obj = AvailabilityFile
 
     def __init__(self,availFile_obj) -> None:
@@ -40,4 +42,24 @@ class EasyAvailability:
             parallel_arr_start_end.append(tmp_end.copy())
 
             self.keyName_valStartTimeEndTimeParallelArrs[innerArr[0]] = parallel_arr_start_end
-        drawDictionary(self.keyName_valStartTimeEndTimeParallelArrs)
+        
+        for name,start_end_parallelArrs in self.keyName_valStartTimeEndTimeParallelArrs.items():
+            tmp_for_starts = start_end_parallelArrs[0]
+            i = -1
+            tmp_to_copy = list()
+            for start_time in tmp_for_starts:
+                i += 1
+                """NOTE: Right here i am converting the DateTimeIndex object that pandas creates, and swapping it to just a normal array by using the .values at the end
+                of the line of code below, only thing is that the values look a tiny bit different when i do that, so if later on i have some issue reading the times
+                and comparing them or something, then come back here and alter this, but it shouldn't matter for my code as i just wanna make minutes arrays for every
+                member and check whether they share the same exact time, which should remain the same whether it looks a little different than in the datetimeindex format
+                should not matter for my code"""
+                tmp = pd.date_range(start=start_time,end=start_end_parallelArrs[1][i] - pd.DateOffset(minutes=1),freq='T').values
+                for ugly_formatted_date in tmp:#this loop is to greatly compress the 16 chars into just the day of the week,time in hours, time in minutes
+                    tmp_datetime = pd.to_datetime(ugly_formatted_date)
+                    str_datetime = tmp_datetime.strftime("%a%H:%M")
+                    tmp_to_copy.append(str_datetime)
+                #(format="%Y-%m-%d %H:%M")
+            self.keyName_valAvailableMinutes[name]  = tmp_to_copy.copy()
+        # drawDictionary(self.keyName_valAvailableMinutes) # verified dictionary has every name and their corresponding available minutes
+        
