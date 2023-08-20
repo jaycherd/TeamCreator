@@ -124,4 +124,6 @@ class ComboHolder:
         print(f"\nnum sets before checks is {len(self.set_of_combos)}")
         checkSets()
         print(f"\nnum sets after checks is {len(self.set_of_combos)}")
+
+
     
