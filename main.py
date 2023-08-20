@@ -20,7 +20,7 @@ combo_obj.createSets()
 easyAvail_obj = EasyAvailability(avail_obj)
 easyAvail_obj.generateDictionary()
 
-# setFinder_obj = SetFinder(combo_obj,avail_obj)
+# setFinder_obj = SetFinder(combo_obj,easyAvail_obj)
 # setFinder_obj.findGoodSets(config.minHoursOverlap,config.minDaysOverlap)
 # setFinder_obj.drawGoodSets()
 
