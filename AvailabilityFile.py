@@ -37,6 +37,7 @@ class AvailabilityFile:
     names = list #parallel to the matrix
     name_avail_matrix = list(list()) #as a matrix -> row lines up with the person, col with day of week
     day_index_arr = list()
+    DEFAULTDAYS = 4
 
 
 
