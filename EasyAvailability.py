@@ -57,7 +57,7 @@ class EasyAvailability:
                 tmp = pd.date_range(start=start_time,end=start_end_parallelArrs[1][i] - pd.DateOffset(minutes=1),freq='T').values
                 for ugly_formatted_date in tmp:#this loop is to greatly compress the 16 chars into just the day of the week,time in hours, time in minutes
                     tmp_datetime = pd.to_datetime(ugly_formatted_date)
-                    str_datetime = tmp_datetime.strftime("%a%H:%M")
+                    str_datetime = tmp_datetime.strftime("%w-%H:%M")
                     tmp_to_copy.append(str_datetime)
                 #(format="%Y-%m-%d %H:%M")
             self.keyName_valAvailableMinutes[name]  = tmp_to_copy.copy()
