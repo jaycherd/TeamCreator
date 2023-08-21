@@ -67,9 +67,13 @@ class ComboHolder:
         ########################################################################################################################
         for team in combinations(self.group1 + self.group2 + self.group3,self.team_size):
             self.combos.append(team)
-        print(f"\nnumber combos before checks is\t{len(self.combos)}")
+        out_str = (f"\nnumber combos before checks is ")
+        print(out_str.ljust(34,'-'),end="> ")
+        print(len(self.combos))
         checkCombos()
-        print(f"\nnumber combos after checks is\t{len(self.combos)}")
+        out_str = (f"\nnumber combos before checks is ")
+        print(out_str.ljust(34,'-'),end="> ")
+        print(len(self.combos))
     
 
     def createSets(self) -> None:
@@ -121,9 +125,13 @@ class ComboHolder:
         ########################################################################################################################    
         for team_combo in combinations(self.combos,self.number_of_teams):
             self.set_of_combos.append(team_combo)
-        print(f"\nnumber sets before checks is\t{len(self.set_of_combos)}")
+        out_str = (f"\nnumber sets before checks is ")
+        print(out_str.ljust(34,'-'),end="> ")
+        print(len(self.set_of_combos))
         checkSets()
-        print(f"\nnumber sets after checks is\t{len(self.set_of_combos)}")
+        out_str = (f"\nnumber sets before checks is ")
+        print(out_str.ljust(34,'-'),end="> ")
+        print(len(self.set_of_combos))
 
 
     
