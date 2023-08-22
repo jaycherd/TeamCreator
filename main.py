@@ -24,6 +24,6 @@ setFinder_obj = SetFinder(combo_obj,easyAvail_obj)
 setFinder_obj.createMinuteOverlapDic(config.minHoursOverlap,config.minDaysOverlap)
 setFinder_obj.createSortedDic()
 setFinder_obj.createCompressedDic()
-# setFinder_obj.drawGoodSets()
+setFinder_obj.drawGoodSets()
 
 # print(f"\n\nthe matrix: {avail_obj.name_avail_matrix}\n\nthen the names array:\n{avail_obj.names}")

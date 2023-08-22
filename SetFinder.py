@@ -121,15 +121,37 @@ class SetFinder:
             self.keyTeamSetID_valMinutesOverlap_comp[set_id] = starts_ends_2d
 
 
-        for k,v in self.keyTeamSetID_valMinutesOverlap_comp.items():
-            print(f"\n\nkey: {k}\t val : {v}")
-            for inner_list in v:
-                print(f"inner list: {inner_list}")
-        
-
-
+        # for k,v in self.keyTeamSetID_valMinutesOverlap_comp.items():
+        #     print(f"\n\nkey: {k}\t val : {v}")
+        #     for inner_list in v:
+        #         print(f"inner list: {inner_list}")
 
 
     def drawGoodSets(self):
-        for set_id,common_times_arr2d in self.keyTeamSetID_valMinutesOverlap.items():
-            print(f"")
+        def convertNum2Day(str):
+            day_of_week = str[0:1]
+            if(day_of_week == '0'):
+                return 'Mon - ' + str[2:]
+            elif(day_of_week == '1'):
+                return 'Tue - ' + str[2:]
+            elif(day_of_week == '2'):
+                return 'Wed - ' + str[2:]
+            elif(day_of_week == '3'):
+                return 'Thr - ' + str[2:]
+            elif(day_of_week == '4'):
+                return 'Fri - ' + str[2:]
+            elif(day_of_week == '5'):
+                return 'Sat - ' + str[2:]
+            elif(day_of_week == '6'):
+                return 'Sun - ' + str[2:]
+            return str
+        
+
+        for set_id,common_times_arr2d in self.keyTeamSetID_valMinutesOverlap_comp.items():
+            print(f"\nSet {set_id}: {self.combo_obj.set_of_combos[set_id]}")
+            for i in range(len(common_times_arr2d)):
+                print(f"Team {i+1}: {self.combo_obj.set_of_combos[set_id][i]}",end="->")
+                for j in range(len(common_times_arr2d[i][0])):
+                    print(f"{convertNum2Day(common_times_arr2d[i][0][j])} to {(common_times_arr2d[i][1][j])[2:]}",end=", ")
+                print()
+
