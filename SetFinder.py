@@ -91,8 +91,42 @@ class SetFinder:
     be an array of parallel arrays, so index 0 will be for teams[0] in teams, thus val[0][0] is the start times that the first team in the set of teams have 
     in common"""
     def createCompressedDic(self):
+        def getStartsEnds(arr):
+            starts = list()
+            ends = list()
+            starts.append(arr[0])
+            for i in range(len(arr)-1):#time format %w %H:%M
+                curr_str = arr[i]
+                curr_day = int(curr_str[0:1])
+                curr_hour = int(curr_str[2:4])
+                curr_min = int(curr_str[5:]) + (curr_hour*60)
+                next_str = arr[i+1]
+                next_day = int(next_str[0:1])
+                next_hour = int(next_str[2:4])
+                next_min = int(next_str[5:]) + (next_hour*60)
+                if(curr_day != next_day or next_min != curr_min + 1):
+                    ends.append(curr_str)
+                    starts.append(next_str)
+            ends.append(arr[-1])
+            res = list()
+            res.append(starts)
+            res.append(ends)
+            return res
+                
+
         for set_id,common_times_arr2d in self.keyTeamSetID_valMinutesOverlap_sorted.items():
-            pass
+            starts_ends_2d = list(list())
+            for common_times in common_times_arr2d:
+                starts_ends_2d.append(getStartsEnds(common_times).copy())
+            self.keyTeamSetID_valMinutesOverlap_comp[set_id] = starts_ends_2d
+
+
+        for k,v in self.keyTeamSetID_valMinutesOverlap_comp.items():
+            print(f"\n\nkey: {k}\t val : {v}")
+            for inner_list in v:
+                print(f"inner list: {inner_list}")
+        
+
 
 
 
