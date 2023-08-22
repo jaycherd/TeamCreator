@@ -129,7 +129,7 @@ class ComboHolder:
         print(out_str.ljust(34,'-'),end="> ")
         print(len(self.set_of_combos))
         checkSets()
-        out_str = (f"\nnumber sets before checks is ")
+        out_str = (f"\nnumber sets after checks is ")
         print(out_str.ljust(34,'-'),end="> ")
         print(len(self.set_of_combos))
 
