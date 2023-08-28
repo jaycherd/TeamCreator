@@ -62,4 +62,3 @@ class EasyAvailability:
                 #(format="%Y-%m-%d %H:%M")
             self.keyName_valAvailableMinutes[name]  = tmp_to_copy.copy()
         # drawDictionary(self.keyName_valAvailableMinutes) # verified dictionary has every name and their corresponding available minutes
-        
