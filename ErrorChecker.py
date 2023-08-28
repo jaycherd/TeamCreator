@@ -3,7 +3,7 @@ from AvailabilityFile import AvailabilityFile
 from GroupPriorityFile import GroupPriorityFile
 
 class ErrorChecker:
-    HELPSTR = "Please read the README if you are still having trouble to see how csv should be formatted and other helpful stuffs  :)"
+    HELPSTR = "Please read the README if you are still having trouble to see how csv should be formatted and other helpful stuffs  \U0001F44D"
     av_obj = AvailabilityFile
     def __init__(self) -> None:
         pass
@@ -27,4 +27,24 @@ class ErrorChecker:
             print(f"ERROR: group2 must not be empty bru")
             print(self.HELPSTR)
             exit()
+
+    def checkCompare(self,cmp_lst,mem_list):
+        print(f"{cmp_lst}")
+        max_num = len(mem_list)-1
+        for num in cmp_lst:
+            if str(num).isnumeric() == False:
+                print(f"ERROR: please only enter numbers  \U0001F611")
+                print(f"Also make sure you're only entering numbers and commas, no comma at the end, no spaces, thanks bro")
+                print(self.HELPSTR)
+                exit()
+            if int(num) > max_num:
+                print(f"ERROR: number ({num}) is greater than the max allowed value of {max_num}")
+                print(self.HELPSTR)
+                exit()
+            if int(num) < 0:
+                print(f"ERROR: no negative nums pls")
+                print(self.HELPSTR)
+                exit()
+
+        
         
