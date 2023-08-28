@@ -5,8 +5,14 @@ from ComboHolder import ComboHolder
 from SetFinder import SetFinder
 from EasyAvailability import EasyAvailability
 from ErrorChecker import ErrorChecker
+import CommandLineArgs as cla
 
 import pandas as pd
+import sys
+
+if (len(sys.argv) > 1):
+    cla.ArgCheck(sys.argv[1:])
+    exit()
 
 e_check = ErrorChecker()
 
@@ -25,6 +31,11 @@ combo_obj.createSets()
 
 easyAvail_obj = EasyAvailability(avail_obj)
 easyAvail_obj.generateDictionary()
+
+
+
+
+
 
 setFinder_obj = SetFinder(combo_obj,easyAvail_obj)
 setFinder_obj.createMinuteOverlapDic(config.minHoursOverlap,config.minDaysOverlap)
