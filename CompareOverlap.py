@@ -23,6 +23,8 @@ class CompareOverlap:
             res.sort(key=lambda x : (key_to_sort_by(x),key_to_sort_by_tiebreak(x),key_to_sort_by_tiebreak2(x)))
             return res.copy()
         def compressDictionary(arr):
+            if (len(arr) == 0):
+                return
             starts = list()
             ends = list()
             starts.append(arr[0])
@@ -87,35 +89,3 @@ class CompareOverlap:
 
         for i in range(len(self.cmprsd_overlap[0])):
             print(f"{convertNum2Day(self.cmprsd_overlap[0][i])} to {(self.cmprsd_overlap[1][i])[2:]}")
-
-                 
-        
-
-
-
-
-
-
-
-#         for i in range(len(team)-1):#team[i] will be current member
-#             """new idea: create an available minutes dictionary from the dictionary i already have, and do this in the EasyAvailability.py that way
-#             i dont have to keep generating this giant dictionary, instead i do it once then access the values in the dictionary here, and check for overlaps"""
-#             # use python set intersection, compare current member avail mins to next member avail mins
-#             curr_member = team[i]
-#             next_member = team[i+1]
-#             if(i == 0):#first iteration
-#                 common_times = set(self.easy_avail_obj.keyName_valAvailableMinutes.get(curr_member)).intersection(self.easy_avail_obj.keyName_valAvailableMinutes.get(next_member))
-#             else:
-#                 common_times = set(common_times).intersection(self.easy_avail_obj.keyName_valAvailableMinutes.get(next_member))
-#         if(len(common_times) < min_hours*60):
-#             valid_set = False
-#             break #will stop tmp_common_times arr from appending the common times too
-#         tmp_common_times_arr.append(common_times.copy())
-#     team_set_id += 1
-#     if valid_set:
-#         self.keyTeamSetID_valMinutesOverlap[team_set_id] = tmp_common_times_arr.copy()
-#     else:
-#         continue
-# out_str = (f"\n# sets w/min {min_hours} hour(s) overlap ")
-# print(out_str.ljust(34,'-'),end="> ")
-# print(len(self.keyTeamSetID_valMinutesOverlap.values()))
