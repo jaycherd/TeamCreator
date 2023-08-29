@@ -81,7 +81,7 @@ class SetFinder:
         #         print(f"inner list: {inner_list}")
 
 
-    """purpose: create yet another dictionary, in this case the dictionary will hold set of rays running parallel
+    """purpose: create yet another dictionary, in this case the dictionary will hold set of arrays running parallel
     the key will be the team set id number, and the value will be the pair of arrays, array at val[0][0] will be an array
     holding all the start times for the teams overlap, and val[0][1] will be an array of the corresponding end time, to find
     this i will use the logic that all times should be contiguous, that is, if there is a common time of 10:00 then there should also be
