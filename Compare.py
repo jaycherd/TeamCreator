@@ -38,7 +38,7 @@ class Compare:
         for val in self.ppl_to_cmp:
             tmp.append(self.list_of_names[val])
         self.ppl_to_cmp = tmp.copy()
-        print(self.ppl_to_cmp)
+        print(f"okie I'm comparing these peeps :\n {self.ppl_to_cmp} \U0001F914")
     
     def generateDict(self):
         self.Easy_obj = EA(self.avail_obj)

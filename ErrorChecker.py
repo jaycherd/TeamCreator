@@ -29,7 +29,6 @@ class ErrorChecker:
             exit()
 
     def checkCompare(self,cmp_lst,mem_list):
-        print(f"{cmp_lst}")
         max_num = len(mem_list)-1
         for num in cmp_lst:
             if str(num).isnumeric() == False:
