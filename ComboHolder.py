@@ -13,6 +13,7 @@ class ComboHolder:
     grp2_empty_flag = bool()
     grp3_empty_flag = bool()
 
+# 
 
 
     def __init__(self,team_size,number_of_teams,group1,group2,group3) -> None:
