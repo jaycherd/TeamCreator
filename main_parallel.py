@@ -2,7 +2,7 @@ import config
 from AvailabilityFile import AvailabilityFile
 from GroupPriorityFile import GroupPriorityFile
 from ComboHolderParallel import ComboHolder
-from SetFinder import SetFinder
+from SetFinderParallel import SetFinder
 from EasyAvailability import EasyAvailability
 from ErrorChecker import ErrorChecker
 
@@ -20,19 +20,15 @@ def main():
 
     # next generate a list of every possible combination and set of combos in the combo object
     # note in this version ComboHolder (same name) is calling different combo holder, parallel version
-    combo_obj = ComboHolder(config.team_size,config.number_of_teams,pri_obj.group1,pri_obj.group2,pri_obj.group3)
-    combo_obj.createCombos()
-    combo_obj.createSets()
+    combo_obj_prl = ComboHolder(config.team_size,config.number_of_teams,pri_obj.group1,pri_obj.group2,pri_obj.group3)
+    combo_obj_prl.createCombos()
+    combo_obj_prl.createSets()
 
     easyAvail_obj = EasyAvailability(avail_obj)
     easyAvail_obj.generateDictionary()
 
 
-
-
-
-
-    setFinder_obj = SetFinder(combo_obj,easyAvail_obj)
+    setFinder_obj = SetFinder(combo_obj_prl,easyAvail_obj)
     setFinder_obj.createMinuteOverlapDic(config.minHoursOverlap,config.minDaysOverlap)
     setFinder_obj.createSortedDic()
     setFinder_obj.createCompressedDic()
