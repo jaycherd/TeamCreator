@@ -2,10 +2,68 @@ from itertools import combinations
 import multiprocessing as mp
 import copy
 
+lock = mp.Lock()
+
+results_glob = []
+
+def checkSets(set_of_combos_to_check, cpu_num, all_members_arr, grp3_empty_flag, grp1_empty_flag, group1, group3, list_repeats_dict) -> list:#note ends are start + length of array, range excludes stop val, so no need to alter by doing end_index - 1, just LEAVE IT
+    # print(f"cpu {cpu_num} successfully entered checksets fxn")
+    res = []
+    tmp = []
+    emptyDict = {member : 0 for member in all_members_arr}
+    for member in all_members_arr:
+        emptyDict[member] = 0
+    # first check for repeats, will eliminate a lot of the sets
+    for team_combo in set_of_combos_to_check:
+        list_repeats_dict[cpu_num] = emptyDict.copy() # this will increment based on the person that we come across, if any index increases past 1 then its a repeat
+        add_this_combo = True
+        for team in team_combo:
+            for member in team:
+                list_repeats_dict[cpu_num][member] += 1
+                if (list_repeats_dict[cpu_num][member] == 2):
+                    add_this_combo = False
+                    break
+            if(add_this_combo == False):
+                break
+        if(add_this_combo == True):
+            tmp.append(team_combo)
+    # self.set_of_combos = tmp.copy()
+    res = tmp[:]
+    tmp.clear()
+    # next check for more than one group 3 member if its not an empty list
+    if((grp3_empty_flag == False) and (len(group3) != 1)): #then do grp3 checks, again only one member should be chosen, thus two should NOT be on same team
+        for team_combo in res:
+            group3_count_in_set = 0
+            add_this_combo = True
+            for team in team_combo:
+                for member in team:
+                    if(member in group3):
+                        group3_count_in_set += 1
+                    if(group3_count_in_set == 2):
+                        add_this_combo = False
+                        break
+                if(add_this_combo == False):
+                    break
+            if(add_this_combo):
+                tmp.append(team_combo)
+        # self.set_of_combos = tmp.copy()
+        result = tmp[:]
+        tmp.clear()
+    else:
+        result = res
+    # print(f"from checks:cpu {cpu_num} eliminated {repeat_elim_count} because of repeats, and eliminated {group3_elim_count} bcs group3")
+    return result
+def custom_error_callback(error):
+    print(error,flush=True)
+def collectResults(result):
+    # print(f"result is adding : {len(result)} items")
+    global results_glob
+    results_glob.append(result)
 
 
 
 class ComboHolder:
+    results = list(list())
     combos = list(list())
     set_of_combos = list(list())
     set_of_combos_checked = list(list())
@@ -22,7 +80,6 @@ class ComboHolder:
     all_results = list(list()) #for use with parallel procs
     list_repeats_dict = list() #need sep list for each process running
 
-# 
 
 
     def __init__(self,team_size,number_of_teams,group1,group2,group3) -> None:
@@ -36,18 +93,7 @@ class ComboHolder:
         self.grp3_empty_flag = (len(group3) == 0)
         self.all_members = group1 + group2 + group3
         if self.grp2_empty_flag:
-            raise Exception("Make sure there are members in group2, all other groups may be empty except for regular members group  :)")
-        
-        #for parallel
-        self.pool = mp.Pool(mp.cpu_count())
-        self.num_cpus = mp.cpu_count()
-        print(f"Your computer has {self.num_cpus} cpus")
-        emptyDict = dict()
-        for i in range(self.num_cpus):
-            for member in self.all_members:
-                emptyDict[member] = 0
-            self.list_repeats_dict.append(emptyDict) #a dictionary to calc repeats, in each cpu separately
-        
+            raise Exception("Make sure there are members in group2, all other groups may be empty except for regular members group  :)")        
 
     def createCombos(self) -> None:
         ########################################################################################################################
@@ -102,52 +148,6 @@ class ComboHolder:
         ########################################################################################################################
         #### start #### inner #### functions
         ########################################################################################################################
-        def checkSets(startindex, endindex, cpu_num) -> list:#note ends are start + length of array, range excludes stop val, so no need to alter by doing end_index - 1, just LEAVE IT
-            all_members_arr = (self.group1 + self.group2 + self.group3)
-            result = list(list())
-            tmp = list(list())
-            emptyDict = dict()
-            for member in self.all_members:
-                emptyDict[member] = 0
-            # first check for repeats, will eliminate a lot of the sets
-            for team_combo in self.set_of_combos[startindex:endindex]:
-                self.list_repeats_dict[cpu_num] = emptyDict.copy() # this will increment based on the person that we come across, if any index increases past 1 then its a repeat
-                add_this_combo = True
-                for team in team_combo:
-                    for member in team:
-                        self.list_repeats_dict[cpu_num][member] += 1
-                        if (self.list_repeats_dict[cpu_num][member] == 2):
-                            add_this_combo = False
-                            break
-                    if(add_this_combo == False):
-                        break
-                if(add_this_combo == True):
-                    tmp.append(team_combo)
-            # self.set_of_combos = tmp.copy()
-            result = tmp.copy()
-            tmp.clear()
-            # next check for more than one group 3 member if its not an empty list
-            if(self.grp3_empty_flag == False or len(self.group3 == 1) == True): #then do grp3 checks, again only one member should be chosen, thus two should NOT be on same team
-                for team_combo in self.set_of_combos[startindex:endindex]:
-                    group3_count_in_set = 0
-                    add_this_combo = True
-                    for team in team_combo:
-                        for member in team:
-                            if(member in self.group3):
-                                group3_count_in_set += 1
-                            if(group3_count_in_set == 2):
-                                add_this_combo = False
-                                break
-                        if(add_this_combo == False):
-                            break
-                    if(add_this_combo):
-                        tmp.append(team_combo)
-                # self.set_of_combos = tmp.copy()
-                result = tmp.copy()
-                tmp.clear()
-            return result
-        def collectResults(result):
-            self.all_results.append(result)
         def split_list(input_list, num_parts):
             avg_part_size = len(input_list) // num_parts
             remainder = len(input_list) % num_parts
@@ -169,40 +169,42 @@ class ComboHolder:
         print(len(self.set_of_combos))
 
         #split big list into (num cpus) equal parts
-        self.set_of_combos_split = split_list(self.set_of_combos,self.num_cpus)
+        num_cpus = mp.cpu_count()
+        self.set_of_combos_split = split_list(self.set_of_combos,num_cpus)
+        
+        emptyDict = dict()
+        list_repeats_dict = list()
+        for i in range(num_cpus):
+            for member in self.all_members:
+                emptyDict[member] = 0
+            list_repeats_dict.append(emptyDict) #a dictionary to calc repeats, in each cpu separately
 
-        #next git the starts and ends
-        parallel_start_vals = list()
-        parallel_end_vals = list()
-        sum_index = 0
-        i = 0
-        for inner_list in self.set_of_combos_split:
-            parallel_start_vals.append(sum_index)
-            sum_index += len(inner_list)
-            parallel_end_vals.append(sum_index)
-            print(f"list #{i} has {len(inner_list)} items in it")
-            i+=1
-
-        if (len(parallel_start_vals) != len(parallel_end_vals)):
-            print("ERROR parallel arrays dont align!!!!!!!")
-        for i in range(len(parallel_start_vals)):
-            print(f"start : {parallel_start_vals[i]}, end : {parallel_end_vals[i]}")
-
+        pool = mp.Pool(mp.cpu_count())
+        
+        print(f"----------------------------------------------------------------")
+        print(f"Parallel Process info: \nYour computer has {num_cpus} cpus\npool : {pool}")
+        print(f"----------------------------------------------------------------")
         cpu_num = 0
-        for start,end in zip(parallel_start_vals,parallel_end_vals):#zip lets you iterate through two lists same time
-            self.pool.apply_async(func=checkSets, args=(start,end,cpu_num), callback=collectResults)
+        for combos_to_check in self.set_of_combos_split:
+            results = pool.apply_async(
+                checkSets, 
+                args=(combos_to_check,cpu_num,self.all_members.copy(),self.grp3_empty_flag,self.grp1_empty_flag,self.group1.copy(),self.group3.copy(),list_repeats_dict.copy()),
+                callback=collectResults, 
+                error_callback=custom_error_callback
+                )
             cpu_num += 1
-        self.pool.close()
-        self.pool.join()
-        self.set_of_combos_checked = self.all_results
+        pool.close()
+        pool.join()            
+        tmp = results_glob
+        i = 0
+        for inner in tmp:#get inner list as thats how they were appended
+            # print(f"process which finished in place {i} had : {len(inner)} items")
+            i += 1
+            for item in inner:#doing this to flatten list into a single list of sets, rather than cpu_num lists of a list of sets
+                self.set_of_combos_checked.append(item)
 
-        out_str = (f"\nnumber sets after checks is ")
+        out_str = (f"number sets after checks is ")
         print(out_str.ljust(34,'-'),end="> ")
         print(len(self.set_of_combos_checked))
-
-
-
-
-
 
     
