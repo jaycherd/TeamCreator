@@ -7,15 +7,12 @@ def ArgCheck(args : list()):
     if(args[0] == "cmp"):
         mc.main()
     elif(args[0] == "prl"):
-        mp.main(False)
+        mp.main()
     elif(args[0] == "prf"): #prf must be specified first
-        P = Performance()
         if(len(args) > 1):
             if(args[1] == "prl"):
                 mp.main(True)
-                P.end()
-                P.drawPerformance()
+                exit()
         else:
             mperf.main()
-            P.end()
-            P.drawPerformance()
+            exit()

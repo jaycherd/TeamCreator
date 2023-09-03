@@ -1,6 +1,5 @@
 from itertools import combinations
 import multiprocessing as mp
-from Performance import Performance
 import copy
 
 lock = mp.Lock()
@@ -84,8 +83,7 @@ class ComboHolder:
 
 
 
-    def __init__(self,team_size,number_of_teams,group1,group2,group3,prfFlag) -> None:
-        self.prfFlag = prfFlag
+    def __init__(self,team_size,number_of_teams,group1,group2,group3) -> None:
         self.team_size = team_size
         self.number_of_teams = number_of_teams
         self.group1 = group1
@@ -148,8 +146,6 @@ class ComboHolder:
     
 
     def createSets(self) -> None:
-        set_prf = Performance()
-        set_prf.start()
         ########################################################################################################################
         #### start #### inner #### functions
         ########################################################################################################################
@@ -211,11 +207,3 @@ class ComboHolder:
         out_str = (f"number sets after checks is ")
         print(out_str.ljust(34,'-'),end="> ")
         print(len(self.set_of_combos_checked))
-
-
-
-        set_prf.end()
-        if(self.prfFlag):
-            set_prf.drawPerformance()
-
-    

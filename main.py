@@ -6,6 +6,7 @@ from SetFinder import SetFinder
 from EasyAvailability import EasyAvailability
 from ErrorChecker import ErrorChecker
 import CommandLineArgs as cla
+import Performance as Performance
 
 import pandas as pd
 import sys
@@ -13,6 +14,8 @@ import sys
 if (len(sys.argv) > 1):
     cla.ArgCheck(sys.argv[1:])
     exit()
+
+
 
 e_check = ErrorChecker()
 
@@ -42,4 +45,3 @@ setFinder_obj.createMinuteOverlapDic(config.minHoursOverlap,config.minDaysOverla
 setFinder_obj.createSortedDic()
 setFinder_obj.createCompressedDic()
 setFinder_obj.drawGoodSets()
-
