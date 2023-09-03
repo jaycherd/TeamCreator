@@ -1,5 +1,7 @@
 from ComboHolder import ComboHolder
 from EasyAvailability import EasyAvailability
+from Performance import Performance
+import time
 
 import pandas as pd
 import datetime as dt
@@ -128,6 +130,7 @@ class SetFinder:
 
 
     def drawGoodSets(self):
+        start = time.perf_counter()
         def convertNum2Day(str):
             day_of_week = str[0:1]
             if(day_of_week == '0'):
@@ -155,3 +158,5 @@ class SetFinder:
                     print(f"{convertNum2Day(common_times_arr2d[i][0][j])} to {(common_times_arr2d[i][1][j])[2:]}",end=", ")
                 print()
 
+        end = time.perf_counter()
+        self.print_time = end-start

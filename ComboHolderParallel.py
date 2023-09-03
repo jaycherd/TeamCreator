@@ -1,5 +1,6 @@
 from itertools import combinations
 import multiprocessing as mp
+from Performance import Performance
 import copy
 
 lock = mp.Lock()
@@ -7,7 +8,8 @@ lock = mp.Lock()
 results_glob = []
 
 def checkSets(set_of_combos_to_check, cpu_num, all_members_arr, grp3_empty_flag, grp1_empty_flag, group1, group3, list_repeats_dict) -> list:#note ends are start + length of array, range excludes stop val, so no need to alter by doing end_index - 1, just LEAVE IT
-    # print(f"cpu {cpu_num} successfully entered checksets fxn")
+    cpu_num = mp.current_process()._identity[0]-1
+    print(f"cpu {cpu_num} successfully entered checksets fxn")
     res = []
     tmp = []
     emptyDict = {member : 0 for member in all_members_arr}
@@ -82,7 +84,8 @@ class ComboHolder:
 
 
 
-    def __init__(self,team_size,number_of_teams,group1,group2,group3) -> None:
+    def __init__(self,team_size,number_of_teams,group1,group2,group3,prfFlag) -> None:
+        self.prfFlag = prfFlag
         self.team_size = team_size
         self.number_of_teams = number_of_teams
         self.group1 = group1
@@ -145,6 +148,8 @@ class ComboHolder:
     
 
     def createSets(self) -> None:
+        set_prf = Performance()
+        set_prf.start()
         ########################################################################################################################
         #### start #### inner #### functions
         ########################################################################################################################
@@ -206,5 +211,11 @@ class ComboHolder:
         out_str = (f"number sets after checks is ")
         print(out_str.ljust(34,'-'),end="> ")
         print(len(self.set_of_combos_checked))
+
+
+
+        set_prf.end()
+        if(self.prfFlag):
+            set_prf.drawPerformance()
 
     

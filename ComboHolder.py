@@ -1,4 +1,5 @@
 from itertools import combinations
+from Performance import Performance
 import copy
 
 class ComboHolder:
@@ -16,7 +17,8 @@ class ComboHolder:
 # 
 
 
-    def __init__(self,team_size,number_of_teams,group1,group2,group3) -> None:
+    def __init__(self,team_size,number_of_teams,group1,group2,group3,prfFlag=False) -> None:
+        self.prfFlag = prfFlag
         self.team_size = team_size
         self.number_of_teams = number_of_teams
         self.group1 = group1
@@ -78,6 +80,8 @@ class ComboHolder:
     
 
     def createSets(self) -> None:
+        prf_obj = Performance()
+        prf_obj.start()
         ########################################################################################################################
         #### start #### inner #### functions
         ########################################################################################################################
@@ -133,6 +137,9 @@ class ComboHolder:
         out_str = (f"\nnumber sets after checks is ")
         print(out_str.ljust(34,'-'),end="> ")
         print(len(self.set_of_combos))
+
+        prf_obj.end()
+        prf_obj.drawPerformance()
 
 
     
