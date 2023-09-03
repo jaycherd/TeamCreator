@@ -1,7 +1,5 @@
 from ComboHolder import ComboHolder
 from EasyAvailability import EasyAvailability
-from Performance import Performance
-import time
 
 import pandas as pd
 import datetime as dt
@@ -130,25 +128,20 @@ class SetFinder:
 
 
     def drawGoodSets(self):
-        start = time.perf_counter()
-        def convertNum2Day(str):
-            day_of_week = str[0:1]
-            if(day_of_week == '0'):
-                return 'Mon - ' + str[2:]
-            elif(day_of_week == '1'):
-                return 'Tue - ' + str[2:]
-            elif(day_of_week == '2'):
-                return 'Wed - ' + str[2:]
-            elif(day_of_week == '3'):
-                return 'Thr - ' + str[2:]
-            elif(day_of_week == '4'):
-                return 'Fri - ' + str[2:]
-            elif(day_of_week == '5'):
-                return 'Sat - ' + str[2:]
-            elif(day_of_week == '6'):
-                return 'Sun - ' + str[2:]
-            return str
-        
+        NUMBERS_TO_STRINGS = {
+            1: "Mon - ",
+            2: "Tue - ",
+            3: "Wed - ",
+            4: "Thr - ",
+            5: "Fri - ",
+            6: "Sat - ",
+            7: "Sun - ",
+        }
+        def convertNum2Day(strng):
+            day_of_week = strng[0:1]
+            if day_of_week.isnumeric() is False:
+                return "ERROR parsing the datetime string"
+            return f"{NUMBERS_TO_STRINGS.get(int(day_of_week))}"
 
         for set_id,common_times_arr2d in self.keyTeamSetID_valMinutesOverlap_comp.items():
             print(f"\nSet {set_id}: {self.combo_obj.set_of_combos[set_id]}")
@@ -157,6 +150,3 @@ class SetFinder:
                 for j in range(len(common_times_arr2d[i][0])):
                     print(f"{convertNum2Day(common_times_arr2d[i][0][j])} to {(common_times_arr2d[i][1][j])[2:]}",end=", ")
                 print()
-
-        end = time.perf_counter()
-        self.print_time = end-start
