@@ -30,16 +30,14 @@ def main():
     combo_obj.createSets()
     prf_obj.endCombo()
 
-    easyAvail_obj = EasyAvailability(avail_obj)
-    easyAvail_obj.generateDictionary()
+    easyavail_obj = EasyAvailability(avail_obj)
+    easyavail_obj.generateDictionary()
 
 
     prf_obj.startSetFinder()
-    prf_obj.startSFInit()
-    setFinder_obj = SetFinder(combo_obj,easyAvail_obj)
-    prf_obj.endSFInit()
+    setFinder_obj = SetFinder(combo_obj,easyavail_obj)
     prf_obj.startSFCMOD()
-    setFinder_obj.createMinuteOverlapDic(config.minHoursOverlap,config.minDaysOverlap)
+    setFinder_obj.createMinuteOverlapDic(config.minHoursOverlap)
     prf_obj.endSFCMOD()
     prf_obj.startSFCSD()
     setFinder_obj.createSortedDic()

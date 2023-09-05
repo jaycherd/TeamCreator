@@ -35,7 +35,7 @@ def main(prf_flag = False):
 
     prf_obj.startSetFinder()
     setFinder_obj = SetFinder(combo_obj_prl,easyAvail_obj)
-    setFinder_obj.createMinuteOverlapDic(config.minHoursOverlap,config.minDaysOverlap)
+    setFinder_obj.createMinuteOverlapDic(config.minHoursOverlap)
     setFinder_obj.createSortedDic()
     setFinder_obj.createCompressedDic()
     setFinder_obj.drawGoodSets()

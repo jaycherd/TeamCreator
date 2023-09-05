@@ -17,7 +17,7 @@ class SetFinder:
         self.combo_obj = combo_obj
         self.easy_avail_obj = easy_avail_obj
 
-    def createMinuteOverlapDic(self,min_hours,min_days) -> None:
+    def createMinuteOverlapDic(self,min_hours) -> None:
         tmp = list()
         team_set_id = -1
         for teams in self.combo_obj.set_of_combos_checked:

@@ -3,13 +3,13 @@ from itertools import combinations
 
 class ComboHolder:
     """"class to create/check team combinations and sets"""
-    combos = list(list())
-    set_of_combos = list(list())
+    combos = []
+    set_of_combos = []
     team_size = int
     number_of_teams = int
-    group1 = list()
-    group2 = list()
-    group3 = list()
+    group1 = []
+    group2 = []
+    group3 = []
     grp1_empty_flag = bool()
     grp2_empty_flag = bool()
     grp3_empty_flag = bool()
@@ -25,12 +25,14 @@ class ComboHolder:
         self.grp2_empty_flag = len(group2) == 0
         self.grp3_empty_flag = len(group3) == 0
         if self.grp2_empty_flag:
-            raise ValueError("Make sure there are members in group2, all other groups may be empty except for regular members group  :)")
+            e_string = "Make sure there are members in group2,\
+                all other groups may be empty except for regular members group  :)"
+            raise ValueError(e_string)
 
     def createCombos(self) -> None:
-        ########################################################################################################################
+        ########################################################
         #### start #### inner #### functions
-        ########################################################################################################################
+        ########################################################
         def checkCombos() -> None:
             tmp = []
             if self.grp1_empty_flag is False or len(self.group1) != 1: #then do grp1 checks

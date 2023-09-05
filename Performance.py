@@ -1,7 +1,7 @@
 import time as t
 
 class Performance:
-
+    """class for tracking program performance"""
     def __init__(self):
         self.start_time = t.perf_counter()
         self.start_time_p = 0
@@ -93,4 +93,4 @@ class Performance:
         if(self.end_time_sf_dgs != 0):
             print(f"SF DGS  : {(self.end_time_sf_dgs - self.start_time_sf_dgs):.4f} seconds")
         # print(f"Prints  : {(self.end_time_p - self.start_time_p):.4f} seconds")
-        print(f"----------------------------------------------------------------\n")
+        print("----------------------------------------------------------------\n")

@@ -3,7 +3,7 @@ import main_parallel as mp
 import main_performance as mperf
 from Performance import Performance
 
-def ArgCheck(args : list()):
+def ArgCheck(args : list):
     if(args[0] == "cmp"):
         mc.main()
     elif(args[0] == "prl"):
