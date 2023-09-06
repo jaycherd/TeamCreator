@@ -3,45 +3,71 @@ from AvailabilityFile import AvailabilityFile
 from GroupPriorityFile import GroupPriorityFile
 from ComboHolder import ComboHolder
 from SetFinder import SetFinder
-from EasyAvailability import EasyAvailability
-from ErrorChecker import ErrorChecker
-import CommandLineArgs as cla
-import Performance as Performance
-
-import pandas as pd
 import sys
 
-if (len(sys.argv) > 1):
-    cla.ArgCheck(sys.argv[1:])
-    exit()
+from EasyAvailability import EasyAvailability
+from ErrorChecker import ErrorChecker
+from Performance import Performance
+import CommandLineArgs as cla
+
+
+def main():
+    prf_flag = False
+    if len(sys.argv) > 1:
+        cla.argCheck(sys.argv[1:])
+        prf_flag = True
+
+    prf_obj = Performance() ##keep this at the beginning
+    prf_obj.start()
+
+    e_check = ErrorChecker()
+
+    # get availability file info
+    avail_obj = AvailabilityFile(config.csv_availability_filename)
+    e_check.checkAvail(avail_obj)
+    # get priority file info
+    pri_obj = GroupPriorityFile(config.csv_priority_filename)
+    e_check.checkGroupPri(pri_obj)
+
+
+    prf_obj.startCombo()
+    # next generate a list of every possible combination and set of combos in the combo object
+    combo_obj = ComboHolder(config.team_size,config.number_of_teams,\
+        pri_obj.group1,pri_obj.group2,pri_obj.group3,True)
+    combo_obj.createCombos()
+    combo_obj.createSets()
+    prf_obj.endCombo()
+
+    prf_obj.startEA()
+    easyavail_obj = EasyAvailability(avail_obj)
+    prf_obj.endEA()
+    prf_obj.startEAGD()
+    easyavail_obj.generateDictionary()
+    prf_obj.endEAGD()
+
+    prf_obj.startSetFinder()
+    setfinder_obj = SetFinder(combo_obj,easyavail_obj)
+    prf_obj.startSFCMOD()
+    setfinder_obj.createMinuteOverlapDic(config.minHoursOverlap)
+    prf_obj.endSFCMOD()
+    prf_obj.startSFCSD()
+    setfinder_obj.createSortedDic()
+    prf_obj.endSFCSD()
+    prf_obj.startSFCCD()
+    setfinder_obj.createCompressedDic()
+    prf_obj.endSFCCD()
+    prf_obj.startSFDGS()
+    setfinder_obj.drawGoodSets()
+    prf_obj.endSFDGS()
+    prf_obj.endSetFinder()
+
+    #keep this at the end - for performance measuring purposes
+    prf_obj.end()
+    if prf_flag:
+        prf_obj.drawPerformance()
 
 
 
-e_check = ErrorChecker()
-
-# get availability file info
-avail_obj = AvailabilityFile(config.csv_availability_filename)
-e_check.checkAvail(avail_obj)
-# get priority file info
-pri_obj = GroupPriorityFile(config.csv_priority_filename)
-e_check.checkGroupPri(pri_obj)
-
-
-# next generate a list of every possible combination and set of combos in the combo object
-combo_obj = ComboHolder(config.team_size,config.number_of_teams,pri_obj.group1,pri_obj.group2,pri_obj.group3)
-combo_obj.createCombos()
-combo_obj.createSets()
-
-easyAvail_obj = EasyAvailability(avail_obj)
-easyAvail_obj.generateDictionary()
-
-
-
-
-
-
-setFinder_obj = SetFinder(combo_obj,easyAvail_obj)
-setFinder_obj.createMinuteOverlapDic(config.minHoursOverlap)
-setFinder_obj.createSortedDic()
-setFinder_obj.createCompressedDic()
-setFinder_obj.drawGoodSets()
+if __name__ == "__main__":
+    main()
+    

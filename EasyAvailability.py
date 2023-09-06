@@ -25,26 +25,28 @@ class EasyAvailability:
         self.availFile_obj = availFile_obj
 
     def generateDictionary(self):
-        for innerArr in self.availFile_obj.name_avail_matrix:
+        for inner_arr in self.availFile_obj.name_avail_matrix:
             parallel_arr_start_end = []
             tmp_start = []
             tmp_end = []
             #get rid of the NaT's so that we can do error checking, otherwise check will not work
-            for val in innerArr[1::2]:
+            for val in inner_arr[1::2]:
                 if pd.isnull(val):
                     continue
                 tmp_start.append(val)
-            for val in innerArr[2::2]:
+            for val in inner_arr[2::2]:
                 if pd.isnull(val):
                     continue
                 tmp_end.append(val)
 
-            assert(len(tmp_start) == len(tmp_end)), "your start and end times arent lining up, make sure that you have the same # start and end times, thanks :)"#then diff num start and end times
+            #then diff num start and end times
+            assert(len(tmp_start) == len(tmp_end)), "your start and end times arent lining up,\
+                make sure that you have the same # start and end times, thanks :)"
             parallel_arr_start_end.append(tmp_start.copy())
             parallel_arr_start_end.append(tmp_end.copy())
 
-            self.keyName_valStartTimeEndTimeParallelArrs[innerArr[0]] = parallel_arr_start_end
-        
+            self.keyName_valStartTimeEndTimeParallelArrs[inner_arr[0]] = parallel_arr_start_end
+
         for name,start_end_prl_arrs in self.keyName_valStartTimeEndTimeParallelArrs.items():
             tmp_for_starts = start_end_prl_arrs[0]
             i = -1
