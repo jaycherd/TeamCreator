@@ -1,10 +1,11 @@
+import sys
+
 import config
 from AvailabilityFile import AvailabilityFile
 from GroupPriorityFile import GroupPriorityFile
 from ComboHolder import ComboHolder
 from SetFinder import SetFinder
-import sys
-
+from DataBase import DataBase
 from EasyAvailability import EasyAvailability
 from ErrorChecker import ErrorChecker
 from Performance import Performance
@@ -60,6 +61,10 @@ def main():
     setfinder_obj.drawGoodSets()
     prf_obj.endSFDGS()
     prf_obj.endSetFinder()
+
+    db_obj = DataBase()
+    db_obj.generateValidSetDatabase(sets=combo_obj,sfinder=setfinder_obj,easy=easyavail_obj)
+
 
     #keep this at the end - for performance measuring purposes
     prf_obj.end()

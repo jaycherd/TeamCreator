@@ -7,9 +7,9 @@ class SetFinder:
     combo_obj = ComboHolder
     easy_avail_obj = EasyAvailability
     goodSets = list()
-    keyTeamSetID_valMinutesOverlap = dict()
-    keyTeamSetID_valMinutesOverlap_sorted = dict()
-    keyTeamSetID_valMinutesOverlap_comp = dict()
+    keyTeamSetID_val5minutesoverlap = dict()
+    keyTeamSetID_val5minutesoverlap_sorted = dict()
+    keyTeamSetID_val5minutesoverlap_comp = dict()
 
     def __init__(self, combo_obj,easy_avail_obj) -> None:
         self.combo_obj = combo_obj
@@ -47,12 +47,12 @@ class SetFinder:
                 tmp_common_times_arr.append(common_times.copy())
             team_set_id += 1
             if valid_set:
-                self.keyTeamSetID_valMinutesOverlap[team_set_id] = tmp_common_times_arr.copy()
+                self.keyTeamSetID_val5minutesoverlap[team_set_id] = tmp_common_times_arr.copy()
             else:
                 continue
         out_str = f"\n# sets w/min {min_hours} hour(s) overlap "
         print(out_str.ljust(34,'-'),end="> ")
-        print(len(self.keyTeamSetID_valMinutesOverlap.values()))
+        print(len(self.keyTeamSetID_val5minutesoverlap.values()))
 
     def createSortedDic(self):
         """convert common times to datetime, sort, then get start/end times for psbl meet times"""
@@ -67,19 +67,19 @@ class SetFinder:
             res.sort(key=lambda x : (keyToSortBy(x),keyToSortByTiebreak(x),keyToSortByTiebreak2(x)))
             return res.copy()
 
-        for set_id,common_times_arr2d in self.keyTeamSetID_valMinutesOverlap.items():
+        for set_id,common_times_arr2d in self.keyTeamSetID_val5minutesoverlap.items():
             tmp_2d = []
             for common_times in common_times_arr2d:
                 tmp_sort = (customSort(common_times)).copy()
                 tmp_2d.append(tmp_sort.copy())
-            self.keyTeamSetID_valMinutesOverlap_sorted[set_id] = tmp_2d
+            self.keyTeamSetID_val5minutesoverlap_sorted[set_id] = tmp_2d
 
         ## below for error checking the dictionaries
-        # for k,v in self.keyTeamSetID_valMinutesOverlap_sorted.items():
+        # for k,v in self.keyTeamSetID_val5minutesoverlap_sorted.items():
         #     print(f"\n\nkey: {k}\t val : {v}")
         #     for inner_list in v:
         #         print(f"inner list: {inner_list}")
-        # for k,v in self.keyTeamSetID_valMinutesOverlap.items():
+        # for k,v in self.keyTeamSetID_val5minutesoverlap.items():
         #     print(f"\n\nkey: {k}\t val : {v}")
         #     for inner_list in v:
         #         print(f"inner list: {inner_list}")
@@ -133,11 +133,11 @@ class SetFinder:
             return res
 
 
-        for set_id,common_times_arr2d in self.keyTeamSetID_valMinutesOverlap_sorted.items():
+        for set_id,common_times_arr2d in self.keyTeamSetID_val5minutesoverlap_sorted.items():
             starts_ends_2d = []
             for common_times in common_times_arr2d:
                 starts_ends_2d.append(getStartsEnds(common_times).copy())
-            self.keyTeamSetID_valMinutesOverlap_comp[set_id] = starts_ends_2d
+            self.keyTeamSetID_val5minutesoverlap_comp[set_id] = starts_ends_2d
 
 
 
@@ -158,7 +158,7 @@ class SetFinder:
                 return "ERROR parsing the datetime string"
             return f"{NUMCHARS_TO_STRINGS.get(day_of_week)} {strng[2:]}"
 
-        for set_id,common_times_arr2d in self.keyTeamSetID_valMinutesOverlap_comp.items():
+        for set_id,common_times_arr2d in self.keyTeamSetID_val5minutesoverlap_comp.items():
             print(f"\nSet {set_id}: {self.combo_obj.set_of_combos[set_id]}")
             for i in range(len(common_times_arr2d)):
                 print(f"Team {i+1}: {self.combo_obj.set_of_combos[set_id][i]}",end="->")

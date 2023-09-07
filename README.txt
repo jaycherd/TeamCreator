@@ -4,6 +4,7 @@ To use the code:
 * even if not all the days of the week are present, but you do need to define the days if you want to see what days there are overlap,
 * again there should not be anything in A1, So the first day you say, for example if you start with "Monday", then B1 should contain "Monday"
 * if a person does not have an availability then put either "N/A" or leave it blank
+* peoples times should be divisible by five, that is HH:00, HH:05, HH:10, etc.
 
 * Then for each person fill in all the start and finish times for them in this format "hh:mm"
 
