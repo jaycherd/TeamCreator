@@ -2,11 +2,10 @@ import sys
 
 import config
 from AvailabilityFile import AvailabilityFile
-from FileWrite import writeValidSets
 from GroupPriorityFile import GroupPriorityFile
 from ComboHolder import ComboHolder
 from SetFinder import SetFinder
-from DataBase import DataBase
+# from DataBase import DataBase
 from EasyAvailability import EasyAvailability
 from ErrorChecker import ErrorChecker
 from Performance import Performance
@@ -14,6 +13,8 @@ import CommandLineArgs as cla
 import Utility
 
 SETS_FNAME = "sets.json"
+EA_FNAME1 = "easyavail.pkl"
+EA_FNAME2 = "eastartendarrs.pkl"
 LASTRUN_NAMES_FNAME = "lastrun_groups.csv"
 
 
@@ -48,8 +49,16 @@ def main():
             pri_obj.group1,pri_obj.group2,pri_obj.group3,True)
         combo_obj.createCombos()
         combo_obj.createSets()
-        writeValidSets(SETS_FNAME,combo_obj)
+        Utility.writeToJSON(SETS_FNAME,combo_obj.set_of_combos)
         prf_obj.endCombo()
+        prf_obj.startEA()
+        easyavail_obj = EasyAvailability(avail_obj)
+        prf_obj.endEA()
+        prf_obj.startEAGD()
+        easyavail_obj.generateDictionary()
+        Utility.writeToPickle(EA_FNAME1,easyavail_obj.keyName_valAvailableMinutes)
+        Utility.writeToPickle(EA_FNAME2,easyavail_obj.keyName_valStartTimeEndTimeParallelArrs)
+        prf_obj.endEAGD()
     else:
         prf_obj.startCombo()
         # next generate a list of every possible combination and set of combos in the combo object
@@ -57,14 +66,15 @@ def main():
             pri_obj.group1,pri_obj.group2,pri_obj.group3,True)
         combo_obj.createSetsFromFile(SETS_FNAME)
         prf_obj.endCombo()
+        prf_obj.startEA()
+        easyavail_obj = EasyAvailability(avail_obj)
+        prf_obj.endEA()
+        prf_obj.startEAGD()
+        easyavail_obj.generateDictionariesFromFile(EA_FNAME1,EA_FNAME2)
+        prf_obj.endEAGD()
 
 
-    prf_obj.startEA()
-    easyavail_obj = EasyAvailability(avail_obj)
-    prf_obj.endEA()
-    prf_obj.startEAGD()
-    easyavail_obj.generateDictionary()
-    prf_obj.endEAGD()
+    
 
     prf_obj.startSetFinder()
     setfinder_obj = SetFinder(combo_obj,easyavail_obj)

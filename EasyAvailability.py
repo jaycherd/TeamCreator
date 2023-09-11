@@ -1,6 +1,7 @@
 import pandas as pd
 
 from AvailabilityFile import AvailabilityFile
+import Utility
 
 
 
@@ -18,8 +19,8 @@ def drawDictionary(dic):
 # error checking: if start times not equal to end times"""
 class EasyAvailability:
     """Easier class for dealing with members avails"""
-    keyName_valStartTimeEndTimeParallelArrs = dict()
-    keyName_valAvailableMinutes = dict()
+    keyName_valStartTimeEndTimeParallelArrs = {}
+    keyName_valAvailableMinutes = {}
     availfile_obj = AvailabilityFile
 
     def __init__(self,availfile_obj) -> None:
@@ -73,3 +74,7 @@ class EasyAvailability:
                 #(format="%Y-%m-%d %H:%M")
             self.keyName_valAvailableMinutes[name]  = set(tmp_to_copy.copy())
         # drawDictionary(self.keyName_valAvailableMinutes) # verified dictionary has every name and their corresponding available minutes
+
+    def generateDictionariesFromFile(self,fname1,fname2):
+        self.keyName_valAvailableMinutes = Utility.getObjFromPickle(fname1)
+        self.keyName_valStartTimeEndTimeParallelArrs = Utility.getObjFromPickle(fname2)

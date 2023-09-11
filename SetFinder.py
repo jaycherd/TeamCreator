@@ -6,10 +6,10 @@ class SetFinder:
     """find good sets from combo holder"""
     combo_obj = ComboHolder
     easy_avail_obj = EasyAvailability
-    goodSets = list()
-    keyTeamSetID_val5minutesoverlap = dict()
-    keyTeamSetID_val5minutesoverlap_sorted = dict()
-    keyTeamSetID_val5minutesoverlap_comp = dict()
+    goodSets = []
+    keyTeamSetID_val5minutesoverlap = {}
+    keyTeamSetID_val5minutesoverlap_sorted = {}
+    keyTeamSetID_val5minutesoverlap_comp = {}
 
     def __init__(self, combo_obj,easy_avail_obj) -> None:
         self.combo_obj = combo_obj

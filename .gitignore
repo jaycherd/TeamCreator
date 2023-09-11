@@ -7,6 +7,9 @@ __pycache__/
 sets.csv
 sets.json
 lastrun_groups.csv
+easyavail.pkl
+eastartendarrs.pkl
+lastrun_groups.csv
 
 # C extensions
 *.so
