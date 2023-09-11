@@ -13,7 +13,7 @@ from Performance import Performance
 import CommandLineArgs as cla
 import Utility
 
-SETS_FNAME = "sets.csv"
+SETS_FNAME = "sets.json"
 LASTRUN_NAMES_FNAME = "lastrun_groups.csv"
 
 
@@ -48,8 +48,8 @@ def main():
             pri_obj.group1,pri_obj.group2,pri_obj.group3,True)
         combo_obj.createCombos()
         combo_obj.createSets()
-        prf_obj.endCombo()
         writeValidSets(SETS_FNAME,combo_obj)
+        prf_obj.endCombo()
     else:
         prf_obj.startCombo()
         # next generate a list of every possible combination and set of combos in the combo object
@@ -81,9 +81,6 @@ def main():
     setfinder_obj.drawGoodSets()
     prf_obj.endSFDGS()
     prf_obj.endSetFinder()
-
-    db_obj = DataBase()
-    db_obj.generateValidSetDatabase(sets=combo_obj,sfinder=setfinder_obj,easy=easyavail_obj)
 
     Utility.createLastRunGroupsCSV(config.csv_priority_filename,LASTRUN_NAMES_FNAME)
 

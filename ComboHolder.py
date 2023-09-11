@@ -143,16 +143,5 @@ class ComboHolder:
 
 
     def createSetsFromFile(self,fname):
-        # with open(fname,'r',encoding='utf-8') as read_file:
-        #     read_obj = csv.reader(read_file)
-        #     for row in read_obj:
-        #         print(row)
-        #         print(f"each row is of type : {type(row)}")
-        #         for item in row:
-        #             print(f"each item is of type : {type(item)}")
-        #         self.set_of_combos.append(row)
-            # print(self.set_of_combos)
-        
-        tmp = fname[0:-3] + "json"
-        with open(tmp,'r',encoding="utf-8") as json_r_file:
+        with open(fname,'r',encoding="utf-8") as json_r_file:
             self.set_of_combos = json.load(json_r_file)
