@@ -17,15 +17,16 @@ def drawDictionary(dic):
 #  value is going to be two arrays(Parallel) having start and end times
 # error checking: if start times not equal to end times"""
 class EasyAvailability:
+    """Easier class for dealing with members avails"""
     keyName_valStartTimeEndTimeParallelArrs = dict()
     keyName_valAvailableMinutes = dict()
-    availFile_obj = AvailabilityFile
+    availfile_obj = AvailabilityFile
 
-    def __init__(self,availFile_obj) -> None:
-        self.availFile_obj = availFile_obj
+    def __init__(self,availfile_obj) -> None:
+        self.availfile_obj = availfile_obj
 
     def generateDictionary(self):
-        for inner_arr in self.availFile_obj.name_avail_matrix:
+        for inner_arr in self.availfile_obj.name_avail_matrix:
             parallel_arr_start_end = []
             tmp_start = []
             tmp_end = []
@@ -53,10 +54,14 @@ class EasyAvailability:
             tmp_to_copy = []
             for start_time in tmp_for_starts:
                 i += 1
-                # """NOTE: Right here i am converting the DateTimeIndex object that pandas creates, and swapping it to just a normal array by using the .values at the end
-                # of the line of code below, only thing is that the values look a tiny bit different when i do that, so if later on i have some issue reading the times
-                # and comparing them or something, then come back here and alter this, but it shouldn't matter for my code as i just wanna make minutes arrays for every
-                # member and check whether they share the same exact time, which should remain the same whether it looks a little different than in the datetimeindex format
+                # """NOTE: Right here i am converting the DateTimeIndex object that pandas
+                #  creates, and swapping it to just a normal array by using the .values at the end
+                # of the line of code below, only thing is that the values look a tiny bit
+                #  different when i do that, so if later on i have some issue reading the times
+                # and comparing them or something, then come back here and alter this, but it
+                # shouldn't matter for my code as i just wanna make minutes arrays for every
+                # member and check whether they share the same exact time, which should remain
+                # the same whether it looks a little different than in the datetimeindex format
                 # should not matter for my code"""
                 # - pd.DateOffset(minutes=1) #took this out cus started
                 #  doing five minute interval instead

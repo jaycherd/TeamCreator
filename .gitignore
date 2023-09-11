@@ -3,6 +3,11 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# write files
+sets.csv
+sets.json
+lastrun_groups.csv
+
 # C extensions
 *.so
 

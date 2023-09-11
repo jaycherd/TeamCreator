@@ -1,4 +1,6 @@
-"""Module for eficient combination calculations"""
+import csv
+import json
+
 from itertools import combinations
 
 class ComboHolder:
@@ -138,3 +140,19 @@ class ComboHolder:
         out_str = "\nnumber sets after checks is "
         print(out_str.ljust(34,'-'),end="> ")
         print(len(self.set_of_combos))
+
+
+    def createSetsFromFile(self,fname):
+        # with open(fname,'r',encoding='utf-8') as read_file:
+        #     read_obj = csv.reader(read_file)
+        #     for row in read_obj:
+        #         print(row)
+        #         print(f"each row is of type : {type(row)}")
+        #         for item in row:
+        #             print(f"each item is of type : {type(item)}")
+        #         self.set_of_combos.append(row)
+            # print(self.set_of_combos)
+        
+        tmp = fname[0:-3] + "json"
+        with open(tmp,'r',encoding="utf-8") as json_r_file:
+            self.set_of_combos = json.load(json_r_file)

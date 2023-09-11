@@ -2,6 +2,7 @@ import sys
 
 import config
 from AvailabilityFile import AvailabilityFile
+from FileWrite import writeValidSets
 from GroupPriorityFile import GroupPriorityFile
 from ComboHolder import ComboHolder
 from SetFinder import SetFinder
@@ -10,13 +11,21 @@ from EasyAvailability import EasyAvailability
 from ErrorChecker import ErrorChecker
 from Performance import Performance
 import CommandLineArgs as cla
+import Utility
+
+SETS_FNAME = "sets.csv"
+LASTRUN_NAMES_FNAME = "lastrun_groups.csv"
+
 
 
 def main():
     prf_flag = False
+    calcsets_flag = False
     if len(sys.argv) > 1:
-        cla.argCheck(sys.argv[1:])
-        prf_flag = True
+        results = cla.argCheck(sys.argv[1:])
+        prf_flag = results[0]
+        calcsets_flag = results[1]
+    
 
     prf_obj = Performance() ##keep this at the beginning
     prf_obj.start()
@@ -29,15 +38,26 @@ def main():
     # get priority file info
     pri_obj = GroupPriorityFile(config.csv_priority_filename)
     e_check.checkGroupPri(pri_obj)
+    #if user made changes to group csv we should recalculate sets!
+    calcsets_flag2 = Utility.groupsCSVsChanged(config.csv_priority_filename,LASTRUN_NAMES_FNAME)
 
+    if calcsets_flag or calcsets_flag2:
+        prf_obj.startCombo()
+        # next generate a list of every possible combination and set of combos in the combo object
+        combo_obj = ComboHolder(config.team_size,config.number_of_teams,\
+            pri_obj.group1,pri_obj.group2,pri_obj.group3,True)
+        combo_obj.createCombos()
+        combo_obj.createSets()
+        prf_obj.endCombo()
+        writeValidSets(SETS_FNAME,combo_obj)
+    else:
+        prf_obj.startCombo()
+        # next generate a list of every possible combination and set of combos in the combo object
+        combo_obj = ComboHolder(config.team_size,config.number_of_teams,\
+            pri_obj.group1,pri_obj.group2,pri_obj.group3,True)
+        combo_obj.createSetsFromFile(SETS_FNAME)
+        prf_obj.endCombo()
 
-    prf_obj.startCombo()
-    # next generate a list of every possible combination and set of combos in the combo object
-    combo_obj = ComboHolder(config.team_size,config.number_of_teams,\
-        pri_obj.group1,pri_obj.group2,pri_obj.group3,True)
-    combo_obj.createCombos()
-    combo_obj.createSets()
-    prf_obj.endCombo()
 
     prf_obj.startEA()
     easyavail_obj = EasyAvailability(avail_obj)
@@ -65,6 +85,7 @@ def main():
     db_obj = DataBase()
     db_obj.generateValidSetDatabase(sets=combo_obj,sfinder=setfinder_obj,easy=easyavail_obj)
 
+    Utility.createLastRunGroupsCSV(config.csv_priority_filename,LASTRUN_NAMES_FNAME)
 
     #keep this at the end - for performance measuring purposes
     prf_obj.end()
