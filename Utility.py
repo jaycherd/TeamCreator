@@ -2,7 +2,6 @@ import shutil
 import csv
 import json
 import os
-import pandas as pd
 import pickle
 
 

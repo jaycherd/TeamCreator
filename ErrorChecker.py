@@ -10,9 +10,9 @@ class ErrorChecker:
 
     def checkAvail(self,avail_obj):
         self.av_obj = avail_obj
-        if len(avail_obj.names) < config.number_of_teams * config.team_size:
-            print(f"ERROR: you asked to create {config.number_of_teams} teams of {config.team_size} members which requires at least", end = " ")
-            print(f"{config.number_of_teams * config.team_size} members but there were only {len(avail_obj.names)} members provided in your csv")
+        if len(avail_obj.names) < config.NUMBER_OF_TEAMS * config.TEAM_SIZE:
+            print(f"ERROR: you asked to create {config.NUMBER_OF_TEAMS} teams of {config.TEAM_SIZE} members which requires at least", end = " ")
+            print(f"{config.NUMBER_OF_TEAMS * config.TEAM_SIZE} members but there were only {len(avail_obj.names)} members provided in your csv")
             print(self.HELPSTR)
             exit()
     

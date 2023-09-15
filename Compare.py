@@ -2,10 +2,10 @@ from AvailabilityFile import AvailabilityFile
 from GroupPriorityFile import GroupPriorityFile
 from ErrorChecker import ErrorChecker
 from EasyAvailability import EasyAvailability as EA
-import config
 
 
 class Compare:
+    """class for comparing team mems"""
     avail_obj = AvailabilityFile
     pri_obj = GroupPriorityFile
     Easy_obj = EA
@@ -25,7 +25,7 @@ class Compare:
             print(out_str.ljust(20,' '),end="\t")
             if((i+1) % 4 == 0):
                 print()
-        people_to_compare_str = input(f"\ninput who you want to compare, as numbers (comma separated)\U0001f600\n")
+        people_to_compare_str = input("\ninput who you want to compare, as numbers (comma separated)\U0001f600\n")
         self.ppl_to_cmp = (people_to_compare_str.split(','))
         E_obj = ErrorChecker()
         E_obj.checkCompare(self.ppl_to_cmp,self.list_of_names)

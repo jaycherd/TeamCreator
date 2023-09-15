@@ -1,5 +1,3 @@
-import pandas as pd
-
 from ComboHolder import ComboHolder
 from EasyAvailability import EasyAvailability
 

@@ -7,7 +7,7 @@ from ComboHolder import ComboHolder
 from SetFinder import SetFinder
 from EasyAvailability import EasyAvailability
 from ErrorChecker import ErrorChecker
-# from gui import MyFrame
+from gui import MyFrame
 from Performance import Performance
 import CommandLineArgs as cla
 import Utility
@@ -105,7 +105,7 @@ def main():
 
 
     # print(setfinder_obj.keyTeamSetID_val5minutesoverlap_comp)
-    # myFrame = MyFrame()
+    myFrame = MyFrame()
 
 
 
