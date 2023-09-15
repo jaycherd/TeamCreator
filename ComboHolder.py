@@ -4,16 +4,6 @@ from itertools import combinations
 
 class ComboHolder:
     """"class to create/check team combinations and sets"""
-    combos = []
-    set_of_combos = []
-    team_size = int
-    number_of_teams = int
-    group1 = []
-    group2 = []
-    group3 = []
-    grp1_empty_flag = bool()
-    grp2_empty_flag = bool()
-    grp3_empty_flag = bool()
 
     def __init__(self,team_size,number_of_teams,group1,group2,group3,prf_flag=False) -> None:
         self.prf_flag = prf_flag
@@ -29,6 +19,8 @@ class ComboHolder:
             e_string = "Make sure there are members in group2,\
                 all other groups may be empty except for regular members group  :)"
             raise ValueError(e_string)
+        self.combos = []
+        self.set_of_combos = []
 
     def createCombos(self) -> None:
         ########################################################

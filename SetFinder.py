@@ -1,5 +1,8 @@
+import pandas as pd
+
 from ComboHolder import ComboHolder
 from EasyAvailability import EasyAvailability
+
 
 
 class SetFinder:
@@ -14,6 +17,7 @@ class SetFinder:
     def __init__(self, combo_obj,easy_avail_obj) -> None:
         self.combo_obj = combo_obj
         self.easy_avail_obj = easy_avail_obj
+        self.key_teamsetid_val5minutesoverlap_datetime_comp = {}
 
     def createMinuteOverlapDic(self,min_hours) -> None:
         team_set_id = -1

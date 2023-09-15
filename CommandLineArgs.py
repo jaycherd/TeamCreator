@@ -17,7 +17,7 @@ def argCheck(args : list)-> list:
             if args[1] == "prl":
                 mp.main(True)
                 sys.exit(0)
-            elif args[1] == "rerun":
+            elif args[1] == "rerun" or args[1] == "rr":
                 res[0] = True
                 res[1] = True
                 return res

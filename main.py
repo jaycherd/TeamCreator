@@ -5,9 +5,9 @@ from AvailabilityFile import AvailabilityFile
 from GroupPriorityFile import GroupPriorityFile
 from ComboHolder import ComboHolder
 from SetFinder import SetFinder
-# from DataBase import DataBase
 from EasyAvailability import EasyAvailability
 from ErrorChecker import ErrorChecker
+# from gui import MyFrame
 from Performance import Performance
 import CommandLineArgs as cla
 import Utility
@@ -41,8 +41,9 @@ def main():
     e_check.checkGroupPri(pri_obj)
     #if user made changes to group csv we should recalculate sets!
     calcsets_flag2 = Utility.groupsCSVsChanged(config.csv_priority_filename,LASTRUN_NAMES_FNAME)
+    calcsets_flag3 = not(Utility.filesExist(SETS_FNAME,EA_FNAME1,EA_FNAME2,LASTRUN_NAMES_FNAME))
 
-    if calcsets_flag or calcsets_flag2:
+    if calcsets_flag or calcsets_flag2 or calcsets_flag3:
         prf_obj.startCombo()
         # next generate a list of every possible combination and set of combos in the combo object
         combo_obj = ComboHolder(config.team_size,config.number_of_teams,\
@@ -74,19 +75,22 @@ def main():
         prf_obj.endEAGD()
 
 
-    
 
     prf_obj.startSetFinder()
     setfinder_obj = SetFinder(combo_obj,easyavail_obj)
+
     prf_obj.startSFCMOD()
     setfinder_obj.createMinuteOverlapDic(config.minHoursOverlap)
     prf_obj.endSFCMOD()
+
     prf_obj.startSFCSD()
     setfinder_obj.createSortedDic()
     prf_obj.endSFCSD()
+
     prf_obj.startSFCCD()
     setfinder_obj.createCompressedDic()
     prf_obj.endSFCCD()
+
     prf_obj.startSFDGS()
     setfinder_obj.drawGoodSets()
     prf_obj.endSFDGS()
@@ -98,6 +102,11 @@ def main():
     prf_obj.end()
     if prf_flag:
         prf_obj.drawPerformance()
+
+
+    # print(setfinder_obj.keyTeamSetID_val5minutesoverlap_comp)
+    # myFrame = MyFrame()
+    
 
 
 

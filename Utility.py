@@ -1,6 +1,8 @@
 import shutil
 import csv
 import json
+import os
+import pandas as pd
 import pickle
 
 
@@ -12,6 +14,10 @@ def createLastRunGroupsCSV(fname_copy,fname_write):
 
 def groupsCSVsChanged(curr_groups_fname,lastrun_groups_fname)->bool:
     #first check if group pri file has even been generated, if not, return True
+    if not os.path.isfile(lastrun_groups_fname):
+        return True
+
+
     with open(curr_groups_fname,'r',encoding='utf-8') as read_file:
         lst1 = list(csv.reader(read_file,delimiter=','))
     with open(lastrun_groups_fname,'r',encoding='utf-8') as read_file:
@@ -31,3 +37,14 @@ def writeToPickle(fname,obj):
 def getObjFromPickle(fname):#returns obj
     with open(fname,"rb") as mepickle_r_file:
         return pickle.load(mepickle_r_file)
+
+def filesExist(*fnames):
+    for fname in fnames:
+        if os.path.isfile(fname):
+            continue
+        return False
+    return True
+
+def plotAvailability(avails):
+    pass
+
