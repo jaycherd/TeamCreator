@@ -1,12 +1,22 @@
-To use the code:
+Running the program
+* type -> 'python main.py <flags>'
+    note flags are optional
+    flags:
+        cmp - compare two or more specific members common times
+        prf - print out program performance for improvement purposes
+                prf flag can be run with 'rr' flag but prf must be first flag
+        rr  - rerun program, use if made changes that aren't getting detected
+
 * create a spreadsheet in google sheets, column A should contain all of the names starting at A2, so NOTHING in A1
 * row 2 should contain all of the Days of the Week that the availabilities have been givin for, the code should continue to work
 * even if not all the days of the week are present, but you do need to define the days if you want to see what days there are overlap,
 * again there should not be anything in A1, So the first day you say, for example if you start with "Monday", then B1 should contain "Monday"
 * if a person does not have an availability then put either "N/A" or leave it blank
 * peoples times should be divisible by five, that is HH:00, HH:05, HH:10, etc.
-
 * Then for each person fill in all the start and finish times for them in this format "hh:mm"
+
+** NOTE: provided example screenshots of both groupPriority and availability format, can just copy that format then download it as a csv
+* make sure you save it to the same location as the main program
 
 **availability.csv : 
 * Also note: some people may have more than one availability in a day, if that is the case, then you need to include empty spaces to account for this
