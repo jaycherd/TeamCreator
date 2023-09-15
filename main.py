@@ -34,19 +34,19 @@ def main():
     e_check = ErrorChecker()
 
     # get availability file info
-    avail_obj = AvailabilityFile(config.csv_availability_filename)
+    avail_obj = AvailabilityFile(config.CSV_AVAILABILITY_FNAME)
     e_check.checkAvail(avail_obj)
     # get priority file info
-    pri_obj = GroupPriorityFile(config.csv_priority_filename)
+    pri_obj = GroupPriorityFile(config.CSV_GRP_PRIORITY_FNAME)
     e_check.checkGroupPri(pri_obj)
     #if user made changes to group csv we should recalculate sets!
-    calcsets_flag2 = Utility.groupsCSVsChanged(config.csv_priority_filename,LASTRUN_NAMES_FNAME)
+    calcsets_flag2 = Utility.groupsCSVsChanged(config.CSV_GRP_PRIORITY_FNAME,LASTRUN_NAMES_FNAME)
     calcsets_flag3 = not(Utility.filesExist(SETS_FNAME,EA_FNAME1,EA_FNAME2,LASTRUN_NAMES_FNAME))
 
     if calcsets_flag or calcsets_flag2 or calcsets_flag3:
         prf_obj.startCombo()
         # next generate a list of every possible combination and set of combos in the combo object
-        combo_obj = ComboHolder(config.team_size,config.number_of_teams,\
+        combo_obj = ComboHolder(config.TEAM_SIZE,config.NUMBER_OF_TEAMS,\
             pri_obj.group1,pri_obj.group2,pri_obj.group3,True)
         combo_obj.createCombos()
         combo_obj.createSets()
@@ -63,7 +63,7 @@ def main():
     else:
         prf_obj.startCombo()
         # next generate a list of every possible combination and set of combos in the combo object
-        combo_obj = ComboHolder(config.team_size,config.number_of_teams,\
+        combo_obj = ComboHolder(config.TEAM_SIZE,config.NUMBER_OF_TEAMS,\
             pri_obj.group1,pri_obj.group2,pri_obj.group3,True)
         combo_obj.createSetsFromFile(SETS_FNAME)
         prf_obj.endCombo()
@@ -80,7 +80,7 @@ def main():
     setfinder_obj = SetFinder(combo_obj,easyavail_obj)
 
     prf_obj.startSFCMOD()
-    setfinder_obj.createMinuteOverlapDic(config.minHoursOverlap)
+    setfinder_obj.createMinuteOverlapDic(config.MIN_HOURS_OVRLAP)
     prf_obj.endSFCMOD()
 
     prf_obj.startSFCSD()
@@ -96,7 +96,7 @@ def main():
     prf_obj.endSFDGS()
     prf_obj.endSetFinder()
 
-    Utility.createLastRunGroupsCSV(config.csv_priority_filename,LASTRUN_NAMES_FNAME)
+    Utility.createLastRunGroupsCSV(config.CSV_GRP_PRIORITY_FNAME,LASTRUN_NAMES_FNAME)
 
     #keep this at the end - for performance measuring purposes
     prf_obj.end()
