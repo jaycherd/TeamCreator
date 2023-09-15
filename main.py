@@ -27,6 +27,9 @@ def main():
         prf_flag = results[0]
         calcsets_flag = results[1]
     
+    myframe = MyFrame()
+    myframe.drawConfig()
+    
 
     prf_obj = Performance() ##keep this at the beginning
     prf_obj.start()
@@ -105,7 +108,7 @@ def main():
 
 
     # print(setfinder_obj.keyTeamSetID_val5minutesoverlap_comp)
-    myFrame = MyFrame()
+    
 
 
 
