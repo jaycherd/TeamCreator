@@ -1,7 +1,9 @@
+import time
 from AvailabilityFile import AvailabilityFile
 from GroupPriorityFile import GroupPriorityFile
 from ErrorChecker import ErrorChecker
 from EasyAvailability import EasyAvailability as EA
+from gui import MyFrame
 
 
 class Compare:
@@ -20,24 +22,10 @@ class Compare:
         self.list_of_names = P_obj.group1 + P_obj.group2 + P_obj.group3
     
     def what2Cmp(self):
-        for i in range(len(self.list_of_names)):
-            out_str = (f"{i} : {self.list_of_names[i]}")
-            print(out_str.ljust(20,' '),end="\t")
-            if((i+1) % 4 == 0):
-                print()
-        people_to_compare_str = input("\ninput who you want to compare, as numbers (comma separated)\U0001f600\n")
-        self.ppl_to_cmp = (people_to_compare_str.split(','))
+        frame = MyFrame()
+        frame.drawCmpGUI(self.list_of_names)
+        self.ppl_to_cmp = frame.cmp_clk_result
         E_obj = ErrorChecker()
-        E_obj.checkCompare(self.ppl_to_cmp,self.list_of_names)
-        tmp = list()
-        for val in self.ppl_to_cmp:
-            tmp.append(int(val))
-        tmp.sort()
-        self.ppl_to_cmp = tmp.copy()
-        tmp.clear()
-        for val in self.ppl_to_cmp:
-            tmp.append(self.list_of_names[val])
-        self.ppl_to_cmp = tmp.copy()
         print(f"okie I'm comparing these peeps :\n {self.ppl_to_cmp} \U0001F914")
     
     def generateDict(self):
@@ -47,7 +35,3 @@ class Compare:
             if name not in self.ppl_to_cmp:
                 continue
             self.keyName_valAvailableMinutes[name] = available_mins.copy()
-    
-
-
-

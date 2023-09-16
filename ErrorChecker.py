@@ -28,22 +28,22 @@ class ErrorChecker:
             print(self.HELPSTR)
             exit()
 
-    def checkCompare(self,cmp_lst,mem_list):
-        max_num = len(mem_list)-1
-        for num in cmp_lst:
-            if str(num).isnumeric() == False:
-                print(f"ERROR: please only enter numbers  \U0001F611")
-                print(f"Also make sure you're only entering numbers and commas, no comma at the end, no spaces, thanks bro")
-                print(self.HELPSTR)
-                exit()
-            if int(num) > max_num:
-                print(f"ERROR: number ({num}) is greater than the max allowed value of {max_num}")
-                print(self.HELPSTR)
-                exit()
-            if int(num) < 0:
-                print(f"ERROR: no negative nums pls")
-                print(self.HELPSTR)
-                exit()
+    # def checkCompare(self,cmp_lst,mem_list):
+    #     max_num = len(mem_list)-1
+    #     for num in cmp_lst:
+    #         if str(num).isnumeric() == False:
+    #             print(f"ERROR: please only enter numbers  \U0001F611")
+    #             print(f"Also make sure you're only entering numbers and commas, no comma at the end, no spaces, thanks bro")
+    #             print(self.HELPSTR)
+    #             exit()
+    #         if int(num) > max_num:
+    #             print(f"ERROR: number ({num}) is greater than the max allowed value of {max_num}")
+    #             print(self.HELPSTR)
+    #             exit()
+    #         if int(num) < 0:
+    #             print(f"ERROR: no negative nums pls")
+    #             print(self.HELPSTR)
+    #             exit()
 
         
         
