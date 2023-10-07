@@ -1,7 +1,5 @@
 import sys
 import matplotlib.pyplot as plt
-from typing import List
-from typing import Type
 
 import config
 
@@ -23,13 +21,15 @@ class MyFrame:
     """gui"""
     def __init__(self):
         self.root = tk.Tk()
+        self.cmp_clk_result = []
 
     def drawConfig(self):
         self.root.title("Team Creator - Config")
 
         tmp1 = tk.StringVar(self.root)
         tmp1.set(config.MIN_HOURS_OVRLAP)
-        spin_minhrs = tk.Spinbox(self.root,from_=0,to=24,width=self.WIDTH,textvariable=tmp1)
+        spin_minhrs = tk.Spinbox(self.root,from_=0,to=50,width=self.WIDTH,textvariable=tmp1,\
+                                 increment=0.25,format='%.2f')
 
         tmp2 = tk.StringVar(self.root)
         tmp2.set(config.TEAM_SIZE)
@@ -91,7 +91,7 @@ class MyFrame:
         avail_fn = entries[0].get()
         grp_p_fn = entries[1].get()
         try:
-            hrs = int(hrs)
+            hrs = float(hrs)
             sz = int(sz)
             tms = int(tms)
         except ValueError:
@@ -123,7 +123,6 @@ class MyFrame:
             varlst.append(tk.IntVar(value=0))
             chkbtns.append(tk.Checkbutton(frame2,text=mem,variable=varlst[i]))
             chkbtns[i].grid(row=1 + i//4,column=i%4,padx=self.PADX,pady=self.PADY)
-        self.cmp_clk_result = []
         btn = tk.Button(self.root, text = "Accept", bg = "white", fg = "blue",\
                         command = lambda: self.cmpClicked(varlst,lst_mems), font = ("Arial",12))
         btn.pack(padx=self.PADX,pady=self.PADY)
@@ -138,4 +137,3 @@ class MyFrame:
             mems_chosen.append(lst_mems[i])
         self.cmp_clk_result = mems_chosen
         self.root.destroy()
-        

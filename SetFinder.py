@@ -53,8 +53,8 @@ class SetFinder:
             else:
                 continue
         out_str = f"\n# sets w/min {min_hours} hour(s) overlap "
-        print(out_str.ljust(34,'-'),end="> ")
-        print(len(self.keyTeamSetID_val5minutesoverlap.values()))
+        print(out_str.ljust(34,'-'),end="=> ")
+        print(f"{len(self.keyTeamSetID_val5minutesoverlap.values())} sets")
 
     def createSortedDic(self):
         """convert common times to datetime, sort, then get start/end times for psbl meet times"""
