@@ -1,0 +1,2 @@
+MIN_PRI = 1
+MAX_PRI = 3

@@ -8,8 +8,8 @@ minDaysOverlap = 1
 # the min num hours of overlap
 minHoursOverlap = 2
 # the name of the csv file
-csv_availability_filename = 'availability.csv'
-csv_priority_filename = 'groupPriority.csv'
+csv_avail_fname = 'resources\\availability.csv'
+csv_pri_fname = 'resources\\group_priority.csv'
 # # to see some extra info for debugging purposes make this var True
 debug = False
 ################################################################################################################################
