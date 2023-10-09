@@ -3,6 +3,7 @@ from typing import List,Optional
 from icecream import ic
 from member.member import Member
 from utility import fxns as utils
+from frames.home_frame import HomeFrame
 
 
 
@@ -20,6 +21,10 @@ def main():
     
     for member in members:
         member.print_member_attributes()
+    group1, group2, group3 = utils.groups_from_mems(members)
+
+    homefr = HomeFrame(group1=group1,group2=group2,group3=group3)
+    
 
 
 

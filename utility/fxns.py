@@ -3,6 +3,7 @@ from typing import List,Tuple
 
 from icecream import ic
 from utility import constants as csts
+from member.member import Member
 
 def get_names_prl(avail_data: List[List[str]]) -> List[str]:
     names = []
@@ -81,4 +82,13 @@ def trim_availabilities(avails: List[List[List[str]]]) -> List[List[List[str]]]:
                     i += 1
     return avails
 
-    
+def groups_from_mems(mems: List[Member]) -> Tuple[List[str],List[str],List[str]]:
+    group1,group2,group3 = [],[],[]
+    for mem in mems:
+        if mem.priority == 1:
+            group1.append(mem.name)
+        elif mem.priority == 2:
+            group2.append(mem.name)
+        else:
+            group3.append(mem.name)
+    return (group1,group2,group3)
