@@ -1,4 +1,5 @@
 import csv
+import json
 from typing import List,Tuple
 
 from icecream import ic
@@ -92,3 +93,13 @@ def groups_from_mems(mems: List[Member]) -> Tuple[List[str],List[str],List[str]]
         else:
             group3.append(mem.name)
     return (group1,group2,group3)
+
+def json_from_mems(mems: List[Member],fname=csts.json_mem_fname) -> None:
+    res = {}
+    for i,mem in enumerate(mems):
+        tmplst = []
+        tmplst = [mem.name,mem.priority,mem.avail_matrix]
+        res[mem.member_id] = tmplst
+    with open(fname,'w',encoding='UTF-8') as file:
+        json.dump(res,file)
+    

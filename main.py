@@ -22,6 +22,7 @@ def main():
     for member in members:
         member.print_member_attributes()
     group1, group2, group3 = utils.groups_from_mems(members)
+    utils.json_from_mems(members)
 
     homefr = HomeFrame(group1=group1,group2=group2,group3=group3)
     

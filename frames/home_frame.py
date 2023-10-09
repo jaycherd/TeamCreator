@@ -24,6 +24,7 @@ class HomeFrame(BaseFrame):
         self.setup_bottom_frame()
 
 
+
         self.root.mainloop()
 
     def create_styled_frame(self, parent, relx, rely, relwidth, relheight, bg=cdash.BG_COLOR):
@@ -32,7 +33,7 @@ class HomeFrame(BaseFrame):
         frame.place(relx=relx, rely=rely, relwidth=relwidth, relheight=relheight)
         return frame
     
-    def addlbl(self,parent,txt: str,location=tk.BOTTOM,font=cdash.FONT,bd=0,relief=None):
+    def addlbl(self,parent,txt: str,location=tk.TOP,font=cdash.FONT,bd=0,relief=None):
         label = tk.Label(parent,text=txt)
         label.configure(bg=cdash.BG_COLOR,fg=cdash.FG_COLOR,font=font,bd=bd,relief=relief)
         label.pack(side=location)
@@ -54,8 +55,7 @@ class HomeFrame(BaseFrame):
         self.addlbl(self.topleft_frame,txt="Group 01")
         grpstr = fxns.generate_grp_string(group=self.group1)
         self.addtxt(self.topleft_frame,txt=grpstr,location=tk.TOP)
-        
-    
+  
     def setup_topmid_frame(self):
         self.addlbl(self.topmid_frame,txt="Group 02")
         grpstr = fxns.generate_grp_string(group=self.group2)

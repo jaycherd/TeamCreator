@@ -10,6 +10,7 @@ minHoursOverlap = 2
 # the name of the csv file
 csv_avail_fname = 'resources\\availability.csv'
 csv_pri_fname = 'resources\\group_priority.csv'
+json_mem_fname = 'utility\\mems.json'
 # # to see some extra info for debugging purposes make this var True
 debug = False
 ################################################################################################################################
