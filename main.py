@@ -24,7 +24,7 @@ def main():
     group1, group2, group3 = utils.groups_from_mems(members)
     utils.json_from_mems(members)
 
-    homefr = HomeFrame(group1=group1,group2=group2,group3=group3)
+    homefr = HomeFrame(members=members,group1=group1,group2=group2,group3=group3)
     
 
 

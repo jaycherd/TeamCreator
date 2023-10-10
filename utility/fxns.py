@@ -101,5 +101,5 @@ def json_from_mems(mems: List[Member],fname=csts.json_mem_fname) -> None:
         tmplst = [mem.name,mem.priority,mem.avail_matrix]
         res[mem.member_id] = tmplst
     with open(fname,'w',encoding='UTF-8') as file:
-        json.dump(res,file)
+        json.dump(res,file,indent=4)
     

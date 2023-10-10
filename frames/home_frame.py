@@ -1,17 +1,23 @@
 import tkinter as tk
 from typing import List
-
+from threading import Thread
 from icecream import ic
+
+from utility import constants as csts
 from frames.base_frame import BaseFrame
 from frames.utility import frame_constants as cdash
 from frames.utility import fxns
+from member.member import Member
+from team_calcs import calcs
 
 class HomeFrame(BaseFrame):
-    def __init__(self, title="HOME", iconpath="", scr_w_pcnt=.8, scr_h_pcnt=.75,group1 : List[str] = None, group2: List[str] = None, group3: List[str] = None):
+    def __init__(self,members: List[Member], title="HOME", iconpath="", scr_w_pcnt=.8, scr_h_pcnt=.75,group1 : List[str] = None, group2: List[str] = None, group3: List[str] = None):
         super().__init__(title, iconpath, scr_w_pcnt, scr_h_pcnt)
+        self.members = members
         self.group1 = group1
         self.group2 = group2
         self.group3 = group3
+        self.team_size = csts.team_size
         
         self.topleft_frame = self.create_styled_frame(self.root,relx=0,rely=0,relwidth=0.333,relheight=0.5)
         self.topmid_frame = self.create_styled_frame(self.root,relx=0.333,rely=0,relwidth=0.333,relheight=0.5)
@@ -23,7 +29,8 @@ class HomeFrame(BaseFrame):
         self.setup_topright_frame()
         self.setup_bottom_frame()
 
-
+        thread = Thread(target=calcs.generate_teams,args=(self.members,self.group1,self.group2,self.group3,self.team_size))
+        thread.start()
 
         self.root.mainloop()
 
