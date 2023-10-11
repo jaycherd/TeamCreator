@@ -1,3 +1,5 @@
+from datetime import datetime,timedelta
+
 from member.utility import fxns as utils
 from member.utility import constants as csts
 from icecream import ic
@@ -21,6 +23,11 @@ class Member:
                              "(\"HH:MM\") and between 00:00 to 23:59, also ensure if" +
                              "person has no avail to leave it blank or put N/A")
         self._avail_matrix = avail_matrix
+        self._available_minutes = self.generate_available_minutes()
+
+    @property
+    def available_minutes(self):
+        return self._available_minutes
 
     #below is a getter, used whenever try to access private attributes
     @property
@@ -73,14 +80,24 @@ class Member:
                 value = getattr(self, attr_name)
                 print(f"{attr_name}: {value}")
 
+    def generate_available_minutes(self):
+        avail_minutes_set = set()
+        matrix = self._avail_matrix.copy()
+        for row in range(len(matrix)):
+            for col in range(0,len(matrix[row]),2):
+                start_time = datetime.strptime(matrix[row][col],'%H:%M')
+                end_time = datetime.strptime(matrix[row][col + 1],'%H:%M')
+                for single_date in self.daterange(start_time,end_time):
+                    datestr = single_date.strftime("%H:%M")
+                    datestr += f"-{row}" #this to track the current day
+                    avail_minutes_set.add(datestr)
+        # ic(len(avail_minutes_set))
+        return avail_minutes_set
 
-    # Test with an instance of your class
-    # member = YourClass(...)  # Replace `YourClass` with the actual name of your class
-    # print_member_attributes(member)
-
-
-    
-        
-
-
+    def daterange(self,start_date: datetime,end_date: datetime) -> datetime:
+        delta = timedelta(minutes=1)
+        current_date = start_date
+        while current_date < end_date:
+            yield current_date
+            current_date += delta
 

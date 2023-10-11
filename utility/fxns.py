@@ -87,11 +87,11 @@ def groups_from_mems(mems: List[Member]) -> Tuple[List[str],List[str],List[str]]
     group1,group2,group3 = [],[],[]
     for mem in mems:
         if mem.priority == 1:
-            group1.append(mem.name)
+            group1.append(str(mem.member_id)) #quick fix, to make things easier later, sort groups by mem_id and use mem_id in general instead of name
         elif mem.priority == 2:
-            group2.append(mem.name)
+            group2.append(str(mem.member_id))
         else:
-            group3.append(mem.name)
+            group3.append(str(mem.member_id))
     return (group1,group2,group3)
 
 def json_from_mems(mems: List[Member],fname=csts.json_mem_fname) -> None:

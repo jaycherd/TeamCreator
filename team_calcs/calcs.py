@@ -1,5 +1,5 @@
 import json
-from typing import List,Set,Tuple
+from typing import List,Set,Tuple,Dict
 from icecream import ic
 from itertools import combinations
 from collections import Counter
@@ -76,9 +76,21 @@ def generate_sets_of_teams(teams: Set[Tuple[str,...]],grp1: List[str],grp2: List
     # print(sets_of_teams)
     return sets_of_teams
 
-def find_teams_with_olap(teams: Set[Tuple[Tuple[str,...],...]],numteams: str, memsper: str, olap: str, members: List[Member]) -> List[List[List[str]]]:
+def find_teams_with_olap(teams: Set[Tuple[Tuple[str,...],...]],numteams: str, memsper: str, olap: str, members: List[Member],mems_dict: Dict[int,Member]) -> List[List[List[str]]]:
     ic()
-    
+    #okay so members now have an additional attribute --> a set, the set is of every single minute that that person is available
+    #gotten by turning their start and end times into avail minutes
+    #idea: use that set, and perform intersection on members,
+    #optimization: intersection between two mems that result in zero common time, should not be performed again, maybe as i am
+    #performing intersection, i should store in a map, the result of two mems getting intersected
+    #then before intersecting two mems, check if its been done yet if has then just
+    #use that value rather than intersecting it again
+    #initially an easier intersection may be if two mems, have ZERO common time, then store them in a zero_common_map and if you come across
+    #then break and dont do any calcs, this optimization might be worth finding in the beginning which mems have no common
+    #altho i do think be better to find this as we go through the calcs
+    #a lot to think about, how can this be impl...
+
+
 
 
 

@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
-from typing import List,Optional
+from typing import List,Optional,Dict
 from threading import Thread
 from icecream import ic
 
@@ -12,18 +12,19 @@ from member.member import Member
 from team_calcs import calcs
 
 class HomeFrame(BaseFrame):
-    def __init__(self,members: List[Member], title="HOME", iconpath="", scr_w_pcnt=.8, scr_h_pcnt=.75,group1 : List[str] = None, group2: List[str] = None, group3: List[str] = None):
+    def __init__(self,members: List[Member], title="HOME", iconpath="", scr_w_pcnt=.8, scr_h_pcnt=.75,group1 : List[str] = None, group2: List[str] = None, group3: List[str] = None,mem_dict = Dict[int,Member]):
         super().__init__(title, iconpath, scr_w_pcnt, scr_h_pcnt)
         self.members = members
+        self.mems_dict = mem_dict
         self.group1 = group1
         self.group2 = group2
         self.group3 = group3
         self.team_size = csts.team_size
         self.teams = None
         self.sets_of_teams = None
-        numteams_strvar = Optional[tk.StringVar]
-        memsper_strvar = Optional[tk.StringVar]
-        hrolap_strvar = Optional[tk.StringVar]
+        self.numteams_strvar = Optional[tk.StringVar]
+        self.memsper_strvar = Optional[tk.StringVar]
+        self.hrolap_strvar = Optional[tk.StringVar]
         
         self.topleft_frame = self.create_styled_frame(self.root,relx=0,rely=0,relwidth=0.333,relheight=0.5)
         self.topmid_frame = self.create_styled_frame(self.root,relx=0.333,rely=0,relwidth=0.333,relheight=0.5)
@@ -86,17 +87,17 @@ class HomeFrame(BaseFrame):
 
     def setup_topleft_frame(self):
         self.addlbl(self.topleft_frame,txt="Group 01")
-        grpstr = fxns.generate_grp_string(group=self.group1)
+        grpstr = fxns.generate_grp_string(group=self.group1,mems_dict = self.mems_dict)
         self.addtxt(self.topleft_frame,txt=grpstr,location=tk.TOP)
   
     def setup_topmid_frame(self):
         self.addlbl(self.topmid_frame,txt="Group 02")
-        grpstr = fxns.generate_grp_string(group=self.group2)
+        grpstr = fxns.generate_grp_string(group=self.group2,mems_dict = self.mems_dict)
         self.addtxt(self.topmid_frame,txt=grpstr,location=tk.TOP)
     
     def setup_topright_frame(self):
         self.addlbl(self.topright_frame,txt="Group 03")
-        grpstr = fxns.generate_grp_string(group=self.group3)
+        grpstr = fxns.generate_grp_string(group=self.group3,mems_dict = self.mems_dict)
         self.addtxt(self.topright_frame,txt=grpstr,location=tk.TOP)
     
     def setup_bottom_frame(self):
@@ -130,7 +131,7 @@ class HomeFrame(BaseFrame):
         res = fxns.homeframe_inputs_isvalid(numteams=numteams,memsper=memsper,olap=olap)
         if res[0]:
             numteams,memsper,olap = res[2]
-            calcs.find_teams_with_olap(teams=self.sets_of_teams,numteams=numteams,memsper=memsper,olap=olap,members=self.members)
+            calcs.find_teams_with_olap(teams=self.sets_of_teams,numteams=numteams,memsper=memsper,olap=olap,members=self.members,mems_dict=self.mems_dict)
         else:
             if res[1] == 0:
                 messagebox.showerror("Error", "make sure the number of teams is a valid number, ie: 1, 2, 3, 4, 5, 6, etc...")

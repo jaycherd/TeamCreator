@@ -1,12 +1,14 @@
-from typing import List,Tuple,Optional
+from typing import List,Tuple,Optional,Dict
+from member.member import Member
 
 
-def generate_grp_string(group: List[str]) -> str:
+def generate_grp_string(group: List[str],mems_dict: Dict[int,Member]) -> str:
     res = ""
     for i in range(len(group)):
         if i != 0:
             res += ", "
-        res += group[i]
+        mem = mems_dict.get(int(group[i])) #get name by looking up mem id
+        res += mem.name
     return res
 
 #second int in tuple, is the error code
