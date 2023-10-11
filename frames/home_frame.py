@@ -22,6 +22,7 @@ class HomeFrame(BaseFrame):
         self.team_size = csts.team_size
         self.teams = None
         self.sets_of_teams = None
+        self.teamsets_tuple = None #when order does matter, convert to tuple for no funny business
         self.numteams_strvar = Optional[tk.StringVar]
         self.memsper_strvar = Optional[tk.StringVar]
         self.hrolap_strvar = Optional[tk.StringVar]
@@ -131,7 +132,12 @@ class HomeFrame(BaseFrame):
         res = fxns.homeframe_inputs_isvalid(numteams=numteams,memsper=memsper,olap=olap)
         if res[0]:
             numteams,memsper,olap = res[2]
-            calcs.find_teams_with_olap(teamsets=self.sets_of_teams,numteams=numteams,memsper=memsper,olap=olap,members=self.members,mems_dict=self.mems_dict)
+            team_intersection_map = calcs.intersect_team_avail_mins(teamsets=self.sets_of_teams,numteams=numteams,memsper=memsper,olap=olap,members=self.members,mems_dict=self.mems_dict)
+            self.teamsets_tuple = tuple(self.sets_of_teams)
+            id_teamsets_w_val_olap = calcs.find_teams_w_olap(teams_intersected_map=team_intersection_map,mems_dict=self.mems_dict,teamsets=self.teamsets_tuple,olap=olap)
+            ic(id_teamsets_w_val_olap)
+            teamset_to_startend_map = calcs.convert_team_intersections(teams_intersected_map=team_intersection_map,mems_dict=self.mems_dict,teamsets=self.teamsets_tuple,teamset_ids=id_teamsets_w_val_olap)
+            
         else:
             if res[1] == 0:
                 messagebox.showerror("Error", "make sure the number of teams is a valid number, ie: 1, 2, 3, 4, 5, 6, etc...")
