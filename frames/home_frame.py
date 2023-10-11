@@ -131,7 +131,7 @@ class HomeFrame(BaseFrame):
         res = fxns.homeframe_inputs_isvalid(numteams=numteams,memsper=memsper,olap=olap)
         if res[0]:
             numteams,memsper,olap = res[2]
-            calcs.find_teams_with_olap(teams=self.sets_of_teams,numteams=numteams,memsper=memsper,olap=olap,members=self.members,mems_dict=self.mems_dict)
+            calcs.find_teams_with_olap(teamsets=self.sets_of_teams,numteams=numteams,memsper=memsper,olap=olap,members=self.members,mems_dict=self.mems_dict)
         else:
             if res[1] == 0:
                 messagebox.showerror("Error", "make sure the number of teams is a valid number, ie: 1, 2, 3, 4, 5, 6, etc...")

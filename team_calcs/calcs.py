@@ -76,7 +76,12 @@ def generate_sets_of_teams(teams: Set[Tuple[str,...]],grp1: List[str],grp2: List
     # print(sets_of_teams)
     return sets_of_teams
 
-def find_teams_with_olap(teams: Set[Tuple[Tuple[str,...],...]],numteams: str, memsper: str, olap: str, members: List[Member],mems_dict: Dict[int,Member]) -> List[List[List[str]]]:
+def find_teams_with_olap(teamsets: Set[Tuple[Tuple[str,...],...]],numteams: str, memsper: str, olap: str, members: List[Member],mems_dict: Dict[int,Member]) -> List[List[List[str]]]:
+    def getkey(team: Tuple[str,...]) -> str:
+        currkey = ""
+        for mem in team:
+            currkey += mem
+        return currkey
     ic()
     #okay so members now have an additional attribute --> a set, the set is of every single minute that that person is available
     #gotten by turning their start and end times into avail minutes
@@ -89,8 +94,37 @@ def find_teams_with_olap(teams: Set[Tuple[Tuple[str,...],...]],numteams: str, me
     #then break and dont do any calcs, this optimization might be worth finding in the beginning which mems have no common
     #altho i do think be better to find this as we go through the calcs
     #a lot to think about, how can this be impl...
-
-
+    teamset_id = -1
+    teamsets_w_ovrlap = set()
+    team_intersected = {} #key is str(mem_id) + str(mem_id of other mems) val is result of intersection
+    ic(teamsets)
+    for teamset in teamsets:
+        teamset_id += 1
+        for team in teamset:
+            sets = []#will be a list of sets
+            teamkey = getkey(team)
+            shortcut_flag = False
+            if teamkey in team_intersected:
+                intersection_res = team_intersected[teamkey]
+                shortcut_flag = True
+            else:
+                for mem in team:
+                    member = mems_dict.get(int(mem))
+                    sets.append(member.available_minutes)
+                intersection_res = set.intersection(*sets) #should intersect all the sets in the list at once! lit
+                team_intersected[teamkey] = intersection_res
+    ic(len(team_intersected))
+    ic(team_intersected)
+    #next probs check if the intersection creates a valid amount of overlapping minutes, could probs just divide by 60 and check whether this float is 
+    #greater than user input float
+    #maybe some checking that its working and what not first
+    #if this works good, maybe ill just keep as is, and have teamkeys map to an intersection of the minutes overlap,
+    #that way, i can later iterate through the team_intersected map to check whether intersections make a valid team or not..?
+    #swag yeah that seemed to work, so lets do it like that, also i noticed that there were five empty sets, this will help with shortcutting
+    #now i can call another function, with the map team_intersected, actually lets return the map, to the gui, the from homeframe
+    #call another fxn with that returned map, and that fxn will find all the sets with valid overlap and return them.. wait so the other fxn
+    #will also ned the teamsets.. then do the same shortcut via my map, except this time, every teamkey should be in the map, so we can lookup
+    #all the vals without doing any intersecting of giant sets..
 
 
 
