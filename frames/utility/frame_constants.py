@@ -18,3 +18,4 @@ PADX = 8
 PADY = 8
 
 BORDERWIDTH = 4
+SB_W = 8
