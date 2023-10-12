@@ -72,8 +72,6 @@ def generate_sets_of_teams(teams: Set[Tuple[str,...]],grp1: List[str],grp2: List
         if teamset_is_valid(teamset=teamset,grp3=grp3):
             sets_of_teams.add(teamset)
     write_sets_to_json(fname=csts.JSON_TEAMSETS_FNAME,var=list(sets_of_teams))
-    # ic(len(sets_of_teams))
-    # print(sets_of_teams)
     return sets_of_teams
 
 def getkey(team: Tuple[str,...]) -> str:
@@ -83,7 +81,6 @@ def getkey(team: Tuple[str,...]) -> str:
         return currkey
 
 def intersect_team_avail_mins(teamsets: Set[Tuple[Tuple[str,...],...]],numteams: str, memsper: str, olap: str, members: List[Member],mems_dict: Dict[int,Member]) -> Dict[str,Set[str]]:
-    ic()
     #okay so members now have an additional attribute --> a set, the set is of every single minute that that person is available
     #gotten by turning their start and end times into avail minutes
     #idea: use that set, and perform intersection on members,
@@ -96,7 +93,6 @@ def intersect_team_avail_mins(teamsets: Set[Tuple[Tuple[str,...],...]],numteams:
     #altho i do think be better to find this as we go through the calcs
     #a lot to think about, how can this be impl...
     team_intersected = {} #key is str(mem_id) + str(mem_id of other mems) val is result of intersection
-    ic(teamsets)
     for teamset in teamsets:
         for team in teamset:
             sets = []#will be a list of sets
@@ -109,8 +105,6 @@ def intersect_team_avail_mins(teamsets: Set[Tuple[Tuple[str,...],...]],numteams:
                     sets.append(member.available_minutes)
                 intersection_res = set.intersection(*sets) #should intersect all the sets in the list at once! lit
                 team_intersected[teamkey] = intersection_res
-    # ic(len(team_intersected))
-    # ic(team_intersected)
     return team_intersected
     #next probs check if the intersection creates a valid amount of overlapping minutes, could probs just divide by 60 and check whether this float is 
     #greater than user input float
@@ -172,29 +166,20 @@ def compress_intrsxn(sorted_intrsxn: Tuple[str]) -> Tuple[Tuple[str]]:
 def convert_intersection(intrsxn: Set[str]) -> Tuple[Tuple[str]]:
     sorted_intrsxn = sort_intrsxn(intrsxn=intrsxn)
     compressed_intrsxn = compress_intrsxn(sorted_intrsxn)
-    ic(compressed_intrsxn)
+    return compressed_intrsxn
 
 def convert_team_intersections(teams_intersected_map: Dict[str,Set[str]],mems_dict: Dict[int,Member], teamsets: Tuple[Tuple[Tuple[str,...],...]],teamset_ids: Tuple[int]) -> Dict[int,Tuple[Tuple[str]]]:
     #rtype: Dict[key=teamset_id,val=List[List[str]] = the common start,end avails, row = day, evencols = start olap, oddcols = end olap]
     res_dict = {}
     for teamset_id in teamset_ids:
         teams = teamsets[teamset_id]
+        start_end_tups = []
         for team in teams:
             teamkey = getkey(team=team)
             intersxn = teams_intersected_map[teamkey]
             start_end_tup = convert_intersection(intrsxn=intersxn)
-            res_dict[teamset_id] = start_end_tup
+            start_end_tups.append(start_end_tup)
+        res_dict[teamset_id] = tuple(start_end_tups)
     return res_dict
 
             
-
-
-
-
-
-            
-
-
-
-        
-

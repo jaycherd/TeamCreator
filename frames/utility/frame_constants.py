@@ -13,6 +13,7 @@ MYDARKTEAL = "#1f3f45"
 BIGFONT = ("Arial",24)
 FONT = ("Arial",16)
 TINYFONT = ("Arial",2)
+TITLEFONT = ("Arial Bold",24)
 
 PADX = 8
 PADY = 8
