@@ -10,13 +10,13 @@ LIGHTRED = "#ed5353"
 FRAMEBORDER_CLR = "#0c112b"
 MYDARKTEAL = "#1f3f45"
 
-BIGFONT = ("Arial",24)
-FONT = ("Arial",16)
-TINYFONT = ("Arial",2)
-TITLEFONT = ("Arial Bold",24)
+BIGFONT = ("Times New Roman",24)
+FONT = ("Times New Roman",16)
+TINYFONT = ("Times New Roman",2)
+TITLEFONT = ("Times New Roman",24)
 
-PADX = 8
-PADY = 8
+PADX = 6
+PADY = 4
 
 BORDERWIDTH = 4
 SB_W = 8

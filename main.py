@@ -27,8 +27,6 @@ def main():
     homefr = HomeFrame(members=members,group1=group1,group2=group2,group3=group3,mem_dict=members_dict)
     
 
-
-
     ic()
 
 

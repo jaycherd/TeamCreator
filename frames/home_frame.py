@@ -14,6 +14,7 @@ from team_calcs import calcs
 class HomeFrame(BaseFrame):
     def __init__(self,members: List[Member], title="HOME", iconpath="", scr_w_pcnt=.8, scr_h_pcnt=.75,group1 : List[str] = None, group2: List[str] = None, group3: List[str] = None,mem_dict = Dict[int,Member]):
         super().__init__(title, iconpath, scr_w_pcnt, scr_h_pcnt)
+        self.root.configure(bg=cdash.FRAMEBORDER_CLR)
         self.members = members
         self.mems_dict = mem_dict
         self.group1 = group1
@@ -27,15 +28,20 @@ class HomeFrame(BaseFrame):
         self.memsper_strvar = Optional[tk.StringVar]
         self.hrolap_strvar = Optional[tk.StringVar]
         
-        self.topleft_frame = self.create_styled_frame(self.root,relx=0,rely=0,relwidth=0.333,relheight=0.5)
-        self.topmid_frame = self.create_styled_frame(self.root,relx=0.333,rely=0,relwidth=0.333,relheight=0.5)
-        self.topright_frame = self.create_styled_frame(self.root,relx=0.666,rely=0,relwidth=0.334,relheight=0.5)
-        self.bottom_frame = self.create_styled_frame(self.root,relx=0,rely=0.5,relwidth=1,relheight=0.5)
+        self.topleft_frame = self.create_styled_frame(self.root,relx=0,rely=0.003,relwidth=0.333,relheight=0.5)
+        self.topmid_frame = self.create_styled_frame(self.root,relx=0.333,rely=0.003,relwidth=0.333,relheight=0.5)
+        self.topright_frame = self.create_styled_frame(self.root,relx=0.666,rely=0.003,relwidth=0.334,relheight=0.5)
+        self.bottomleft_frame = self.create_styled_frame(self.root,relx=0,rely=0.5,relwidth=0.333,relheight=0.5)
+        self.bottommid_frame = self.create_styled_frame(self.root,relx=0.333,rely=0.5,relwidth=0.667,relheight=0.5)
+        #below are two frames to go within bottom mid, bcs top managed by grid, bottom by pack
+        self.bottommid_innertop_frame = None
+        self.bottommid_innerbot_frame = None 
         
         self.setup_topleft_frame()
         self.setup_topmid_frame()
         self.setup_topright_frame()
-        self.setup_bottom_frame()
+        self.setup_bottomleft_frame()
+        self.setup_bottommid_frame()
 
         # thread = Thread(target=self.generate_teams_and_sets)
         # thread.start()
@@ -70,19 +76,25 @@ class HomeFrame(BaseFrame):
         modal_win.grab_set() #makes it modal, aka cant alter home frame until user closes window
         return modal_win
     
-    def create_styled_frame(self, parent, relx, rely, relwidth, relheight, bg=cdash.BG_COLOR):
+    def create_styled_frame(self, parent, relx, rely, relwidth, relheight, bg=cdash.BG_COLOR,border=True,place=True):
         frame = tk.Frame(parent, bg=bg)
-        frame.configure(highlightbackground=cdash.FRAMEBORDER_CLR,highlightcolor=cdash.FRAMEBORDER_CLR,highlightthickness=cdash.BORDERWIDTH)
-        frame.place(relx=relx, rely=rely, relwidth=relwidth, relheight=relheight)
+        if border:
+            frame.configure(highlightbackground=cdash.FRAMEBORDER_CLR,highlightcolor=cdash.FRAMEBORDER_CLR,highlightthickness=cdash.BORDERWIDTH)
+        if place:
+            frame.place(relx=relx, rely=rely, relwidth=relwidth, relheight=relheight)
         return frame
     
-    def addlbl(self,parent,txt: str,location=tk.TOP,font=cdash.FONT,bd=0,relief=None,style='pack',row=0,col=0,sticky='E',padx=2,pady=2):
+    def addlbl(self,parent,txt: str,location=tk.TOP,font=cdash.FONT,bd=0,relief=None,style='pack',row=0,col=0,sticky='E',padx=2,pady=2,wrap=False):
         label = tk.Label(parent,text=txt)
         label.configure(bg=cdash.BG_COLOR,fg=cdash.FG_COLOR,font=font,bd=bd,relief=relief)
-        if style == 'pack':
+        if wrap:
+            label.config(justify=tk.LEFT,wraplength=self.root.winfo_width()/3)
+            label.grid(row=row,column=col)
+        elif style == 'pack':
             label.pack(side=location)
         else:
             label.grid(row=row,column=col,sticky=sticky,padx=padx,pady=pady)
+        
 
     def addbtn(self,parent,txt: str, location=tk.TOP,pady=0,padx=2,fxn=None,style='pack',row=0,col=0,sticky='E',width=20):
         btn = tk.Button(parent,text=txt)
@@ -94,13 +106,17 @@ class HomeFrame(BaseFrame):
         else:
             btn.grid(row=row,column=col,sticky=sticky,padx=padx)
 
-    def addtxt(self,parent,txt: str="", location=tk.TOP,yscrlcmd=None):
+    def addtxt(self,parent,txt: str="", location=tk.TOP,yscrlcmd=None,style='pack',row=0,col=0,stickto='E'):
         text_widget = tk.Text(parent, wrap=tk.WORD)
         text_widget.configure(bg=cdash.BG_COLOR,fg=cdash.FG_COLOR,font=cdash.FONT)
         text_widget.configure(yscrollcommand=yscrlcmd)
         text_widget.config(font=cdash.FONT)
         text_widget.insert(tk.END, txt)
-        text_widget.pack(fill=tk.BOTH,expand=True,side=location)
+        text_widget.config(state=tk.DISABLED) #must be changed later if you want add txt
+        if style == 'pack':
+            text_widget.pack(fill=tk.BOTH,expand=True,side=location)
+        elif style == 'grid':
+            text_widget.grid(row=row,column=col,sticky=stickto)
         return text_widget
     
     def addspinbox(self,parent,location=tk.TOP,pady=0,padx=0,fxn=None,style='pack',row=0,col=0,sticky='E',min=0,maks=100,incr=0.25,format='%.2f',stvar=0):
@@ -108,9 +124,13 @@ class HomeFrame(BaseFrame):
         spin_box.configure(bg=cdash.BG_COLOR,fg=cdash.FG_COLOR,font=cdash.FONT,width=cdash.SB_W)
         spin_box.grid(row=row,column=col,sticky=sticky)
     
-    def addscrollbar(self,parent):
+    def addscrollbar(self,parent,style='pack',row=0,col=0):
         scrollbar = tk.Scrollbar(parent)
-        scrollbar.pack(side=tk.RIGHT,fill=tk.Y)
+        if style == 'pack':
+            scrollbar.pack(side=tk.RIGHT,fill=tk.Y)
+        else:
+            scrollbar.configure(orient=tk.VERTICAL)
+            scrollbar.grid(row=row,column=col,sticky=tk.N+tk.S)
         return scrollbar
 
     def setup_topleft_frame(self):
@@ -128,28 +148,50 @@ class HomeFrame(BaseFrame):
         grpstr = fxns.generate_grp_string(group=self.group3,mems_dict = self.mems_dict)
         self.addtxt(self.topright_frame,txt=grpstr,location=tk.TOP)
     
-    def setup_bottom_frame(self):
-        self.addlbl(self.bottom_frame,txt="",location=tk.TOP,font=cdash.TINYFONT,style='grid',row=0,col=0)
-        self.addbtn(self.bottom_frame,txt="Generate Sets",location=tk.TOP,
-                    pady=12,fxn=self.generate_btn_clicked,style='grid',row=1,col=0,sticky='W')
+    def setup_bottomleft_frame(self):
+        self.addlbl(self.bottomleft_frame,txt="",location=tk.TOP,font=cdash.TINYFONT,style='grid',row=0,col=0,padx=cdash.PADX)
+        self.addbtn(self.bottomleft_frame,txt="Generate Sets",location=tk.TOP,padx=cdash.PADX,
+                    pady=cdash.PADY,fxn=self.generate_btn_clicked,style='grid',row=1,col=0,sticky='W')
 
-        num_teams_str     = "Number of teams:                        "
-        self.addlbl(self.bottom_frame,txt=num_teams_str,font=cdash.FONT,style='grid',row=2,col=0,sticky='W')
-        self.numteams_strvar = tk.StringVar(self.bottom_frame)
+        num_teams_str     = "Num teams:  "
+        self.addlbl(self.bottomleft_frame,txt=num_teams_str,font=cdash.FONT,style='grid',row=2,col=0,sticky='W',padx=cdash.PADX)
+        self.numteams_strvar = tk.StringVar(self.bottomleft_frame)
         self.numteams_strvar.set(csts.number_of_teams)
-        self.addspinbox(self.bottom_frame,style='grid',row=2,col=1,sticky='E',min=0,maks=100,incr=1,format='%.0f',stvar=self.numteams_strvar)
+        self.addspinbox(self.bottomleft_frame,style='grid',row=2,col=1,sticky='E',min=0,maks=100,incr=1,format='%.0f',stvar=self.numteams_strvar)
 
-        mems_per_team_str = "How many members will be on each team:  "
-        self.addlbl(self.bottom_frame,txt=mems_per_team_str,font=cdash.FONT,style='grid',row=3,col=0,sticky='W')
-        self.memsper_strvar = tk.StringVar(self.bottom_frame)
+        mems_per_team_str = "Mems/team:  "
+        self.addlbl(self.bottomleft_frame,txt=mems_per_team_str,font=cdash.FONT,style='grid',row=3,col=0,sticky='W',padx=cdash.PADX)
+        self.memsper_strvar = tk.StringVar(self.bottomleft_frame)
         self.memsper_strvar.set(csts.team_size)
-        self.addspinbox(self.bottom_frame,style='grid',row=3,col=1,sticky='E',min=0,maks=100,incr=1,format='%.0f',stvar=self.memsper_strvar)
+        self.addspinbox(self.bottomleft_frame,style='grid',row=3,col=1,sticky='E',min=0,maks=100,incr=1,format='%.0f',stvar=self.memsper_strvar)
 
-        hr_olap_txt       = "Hrs overlap to be a valid set of teams: "
-        self.addlbl(self.bottom_frame,txt=hr_olap_txt,location=tk.TOP,font=cdash.FONT,style='grid',row=4,col=0,sticky='W')
-        self.hrolap_strvar = tk.StringVar(self.bottom_frame)
+        hr_olap_txt       = "Hrs overlap:"
+        self.addlbl(self.bottomleft_frame,txt=hr_olap_txt,location=tk.TOP,font=cdash.FONT,style='grid',row=4,col=0,sticky='W',padx=cdash.PADX)
+        self.hrolap_strvar = tk.StringVar(self.bottomleft_frame)
         self.hrolap_strvar.set(csts.MIN_HRS_OLAP)
-        self.addspinbox(self.bottom_frame,style='grid',row=4,col=1,sticky='E',min=0,maks=100,incr=0.25,format='%.2f',stvar=self.hrolap_strvar)
+        self.addspinbox(self.bottomleft_frame,style='grid',row=4,col=1,sticky='E',min=0,maks=100,incr=0.25,format='%.2f',stvar=self.hrolap_strvar)
+    
+    def setup_bottommid_frame(self):
+        self.bottommid_innertop_frame = self.create_styled_frame(self.bottommid_frame,relx=0,rely=0,relwidth=1,relheight=.65,border=False,place=False)
+        self.bottommid_innerbot_frame = self.create_styled_frame(self.bottommid_frame,relx=0,rely=.65,relwidth=1,relheight=.45,border=False,place=False)
+        self.bottommid_innertop_frame.grid(row=0,sticky='W')
+        self.bottommid_innerbot_frame.grid(row=1,sticky='W')
+        self.setup_bottommid_innertop_frame()
+        self.setup_bottommid_innerbot_frame()
+      
+    def setup_bottommid_innertop_frame(self):
+        self.addlbl(self.bottommid_innertop_frame,txt="",location=tk.TOP,font=cdash.TINYFONT,style='grid',row=0,col=0,padx=cdash.PADX)
+        self.addbtn(self.bottommid_innertop_frame,txt="Compare Members",location=tk.TOP,padx=cdash.PADX,
+                    pady=cdash.PADY,fxn=self.compare_button_clicked,style='grid',row=1,col=0,sticky='W')
+        txt = "Enter mems to compare (comma separated):\nCan enter 1 or more mems"
+        self.bottommid_frame.update_idletasks()
+        self.addlbl(self.bottommid_innertop_frame,txt=txt,location=tk.TOP,font=cdash.FONT,style='grid',row=2,col=0,padx=cdash.PADX,wrap=True)
+    
+    def setup_bottommid_innerbot_frame(self):
+        scrollbar = self.addscrollbar(self.bottommid_innerbot_frame)
+        txt = "Member1 , Member2 , Member3[optional] , ..."
+        txtwidget = self.addtxt(self.bottommid_innerbot_frame,location=tk.LEFT,yscrlcmd=scrollbar.set,txt=txt)
+        txtwidget.config(state=tk.NORMAL)
     
 
     def generate_btn_clicked(self):
@@ -173,8 +215,7 @@ class HomeFrame(BaseFrame):
             id_teamsets_w_val_olap = calcs.find_teams_w_olap(teams_intersected_map=team_intersection_map,mems_dict=self.mems_dict,teamsets=self.teamsets_tuple,olap=olap)
             teamset_to_startend_map = calcs.convert_team_intersections(teams_intersected_map=team_intersection_map,mems_dict=self.mems_dict,teamsets=self.teamsets_tuple,teamset_ids=id_teamsets_w_val_olap)
             self.view_teams_modal_window(teamset_to_startend_map,olap)
-            ######################################################################################################################################
-            
+            ######################################################################################################################################            
         else:
             if res[1] == 0:
                 messagebox.showerror("Error", "make sure the number of teams is a valid number, ie: 1, 2, 3, 4, 5, 6, etc...")
@@ -184,6 +225,9 @@ class HomeFrame(BaseFrame):
                 messagebox.showerror("Error", "make sure that the hrs of overlap is a valid number, ie: 0.00, 0.25, 0.50, 0.75, 1.00, 1.25, 1.50, etc...")
             elif res[1] == 3:
                 messagebox.showerror("Error", "invalid number of teams and members per team combo make sure number of teams * mems per <= total members")
+    
+    def compare_button_clicked(self):
+        ic()
 
 
     def view_teams_modal_window(self,teamset_to_startend_map,olap):
