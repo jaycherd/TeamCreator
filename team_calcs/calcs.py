@@ -182,4 +182,30 @@ def convert_team_intersections(teams_intersected_map: Dict[str,Set[str]],mems_di
         res_dict[teamset_id] = tuple(start_end_tups)
     return res_dict
 
-            
+"""0 = success, 1 = error"""
+def check_cmp_input(input: str,valid_names: Set[str]) -> Tuple[int,str]:
+    #first convert the input to a list
+    input_lst = input.replace(' ','').split(',')
+    for name in input_lst:
+        if name == '':
+            return (-2,'')
+        if name not in valid_names:
+            return (-1,name)
+    return 0,'' #success
+
+def convert_names2id(names: List[str], mems: List[Member]) -> List[int]:
+    res = []
+    for name in names:
+        for mem in mems:
+            if mem.name == name:
+                res.append(mem.member_id)
+                break
+    return res
+
+def find_cmp_olap(ids: List[int], mems_dict: Dict[int,Member]) -> Set[str]:
+    sets = []#will be a list of sets
+    for id in ids:
+        member = mems_dict.get(int(id))
+        sets.append(member.available_minutes)
+    return set.intersection(*sets) #should intersect all the sets in the list at once! lit
+

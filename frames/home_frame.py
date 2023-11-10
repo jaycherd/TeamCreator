@@ -24,9 +24,11 @@ class HomeFrame(BaseFrame):
         self.teams = None
         self.sets_of_teams = None
         self.teamsets_tuple = None #when order does matter, convert to tuple for no funny business
-        self.numteams_strvar = Optional[tk.StringVar]
-        self.memsper_strvar = Optional[tk.StringVar]
-        self.hrolap_strvar = Optional[tk.StringVar]
+        self.numteams_strvar : Optional[tk.StringVar] = None
+        self.memsper_strvar : Optional[tk.StringVar] = None
+        self.hrolap_strvar : Optional[tk.StringVar] = None
+        self.cmp_txt_strvar : Optional[tk.StringVar] = None
+        self.cmp_txt_widget : Optional[tk.Text] = None
         
         self.topleft_frame = self.create_styled_frame(self.root,relx=0,rely=0.003,relwidth=0.333,relheight=0.5)
         self.topmid_frame = self.create_styled_frame(self.root,relx=0.333,rely=0.003,relwidth=0.333,relheight=0.5)
@@ -89,7 +91,7 @@ class HomeFrame(BaseFrame):
         label.configure(bg=cdash.BG_COLOR,fg=cdash.FG_COLOR,font=font,bd=bd,relief=relief)
         if wrap:
             label.config(justify=tk.LEFT,wraplength=self.root.winfo_width()/3)
-            label.grid(row=row,column=col)
+            label.grid(row=row,column=col,padx=padx)
         elif style == 'pack':
             label.pack(side=location)
         else:
@@ -106,13 +108,14 @@ class HomeFrame(BaseFrame):
         else:
             btn.grid(row=row,column=col,sticky=sticky,padx=padx)
 
-    def addtxt(self,parent,txt: str="", location=tk.TOP,yscrlcmd=None,style='pack',row=0,col=0,stickto='E'):
+    def addtxt(self,parent,txt: str="", location=tk.TOP,yscrlcmd=None,style='pack',row=0,col=0,stickto='E',disable=True):
         text_widget = tk.Text(parent, wrap=tk.WORD)
         text_widget.configure(bg=cdash.BG_COLOR,fg=cdash.FG_COLOR,font=cdash.FONT)
         text_widget.configure(yscrollcommand=yscrlcmd)
         text_widget.config(font=cdash.FONT)
         text_widget.insert(tk.END, txt)
-        text_widget.config(state=tk.DISABLED) #must be changed later if you want add txt
+        if disable:
+            text_widget.config(state=tk.DISABLED) #must be changed later if you want add txt
         if style == 'pack':
             text_widget.pack(fill=tk.BOTH,expand=True,side=location)
         elif style == 'grid':
@@ -190,8 +193,8 @@ class HomeFrame(BaseFrame):
     def setup_bottommid_innerbot_frame(self):
         scrollbar = self.addscrollbar(self.bottommid_innerbot_frame)
         txt = "Member1 , Member2 , Member3[optional] , ..."
-        txtwidget = self.addtxt(self.bottommid_innerbot_frame,location=tk.LEFT,yscrlcmd=scrollbar.set,txt=txt)
-        txtwidget.config(state=tk.NORMAL)
+        self.cmp_txt_widget = self.addtxt(self.bottommid_innerbot_frame,location=tk.LEFT,yscrlcmd=scrollbar.set,txt=txt)
+        self.cmp_txt_widget.config(state=tk.NORMAL)
     
 
     def generate_btn_clicked(self):
@@ -227,16 +230,35 @@ class HomeFrame(BaseFrame):
                 messagebox.showerror("Error", "invalid number of teams and members per team combo make sure number of teams * mems per <= total members")
     
     def compare_button_clicked(self):
-        ic()
+        valid_names = set()
+        for member in self.members:
+            valid_names.add(member.name)
+        cmp_input_str = self.cmp_txt_widget.get('1.0',tk.END).rstrip('\n')
+        chk_res = calcs.check_cmp_input(cmp_input_str,valid_names=valid_names)
+        if chk_res[0] == -1:
+            messagebox.showerror("Error",f"Name '{chk_res[1]}' was found to be invalid," +
+                                 "check your input files make sure you input name exactly same" +
+                                 ", and make sure names match!")
+        elif chk_res[0] == -2:
+            messagebox.showerror("Error","Remove Trailing Comma PLEEEEAAAASE")
+        else:#the input was valid
+            cmp_input_lst = cmp_input_str.replace(' ','').split(',')
+            mem_ids = calcs.convert_names2id(cmp_input_lst,self.members)
+            common_times = calcs.find_cmp_olap(ids=mem_ids,mems_dict=self.mems_dict)
+            compressed_common_times = tuple()
+            if common_times:
+                compressed_common_times = calcs.convert_intersection(common_times)
+            self.view_cmp_olap_modal_window(compressed_common_times,cmp_input_lst)
+            # ic(compressed_common_times)
+            
+
 
 
     def view_teams_modal_window(self,teamset_to_startend_map,olap):
         modal_win = self.make_modal_window(title="Teams")
         scrollbar = self.addscrollbar(modal_win)
-        txtwidget = self.addtxt(modal_win,location=tk.LEFT,yscrlcmd=scrollbar.set)
-
         txt = f"Found {len(teamset_to_startend_map)} team sets with {olap} hours in common\n"
-        txtwidget.insert(tk.END,txt)
+        txtwidget = self.addtxt(modal_win,txt=txt,location=tk.LEFT,yscrlcmd=scrollbar.set,disable=False)
 
         counter = 1
         #next have to fill txt widget with teams and their common time
@@ -252,6 +274,18 @@ class HomeFrame(BaseFrame):
                 txt2 = f"[{team_mems_str}]:\n{fxns.draw_start_end(val[i])}"
                 txtwidget.insert(tk.END,txt2)
             txtwidget.insert(tk.END,'\n')
+
+    def view_cmp_olap_modal_window(self,start_end_tups,cmp_lst):#[Tuple[starts],Tuple[ends]]
+        modal_win = self.make_modal_window(title="Availability Comparison")
+        scrollbar = self.addscrollbar(modal_win)
+        txt = ','.join(cmp_lst) + ':'
+        txtwidget = self.addtxt(modal_win,txt=txt,location=tk.LEFT,yscrlcmd=scrollbar.set,disable=False)
+        if not start_end_tups:
+            txt2 = "\nNo common time was found between these mems"
+        else:
+            txt2 = f"\n{fxns.draw_start_end(start_end_tups)}"
+        txtwidget.insert(tk.END,txt2)
+        txtwidget.insert(tk.END,'\n')
 
         
 
