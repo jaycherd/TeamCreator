@@ -58,13 +58,13 @@ def get_names_from_memids_tup(mem_ids: Tuple[Tuple[str]], mems_dict: Dict[int,Me
 
 def get_day(daynum: str) -> str:
     switcher = {
-        '0': "Sun",
-        '1': "Mon",
-        '2': "Tues",
-        '3': "Wed",
-        '4': "Thur",
-        '5': "Fri",
-        '6': "Sat"
+        '0': "Mon",
+        '1': "Tues",
+        '2': "Wed",
+        '3': "Thur",
+        '4': "Fri",
+        '5': "Sat",
+        '6': "Sun"
     }
     return switcher.get(daynum, "Invalid day number")
 
