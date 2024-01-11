@@ -14,7 +14,7 @@ def generate_grp_string(group: List[str],mems_dict: Dict[int,Member]) -> str:
     return res
 
 #second int in tuple, is the error code
-def homeframe_inputs_isvalid(numteams: str, memsper: str, olap: str, memsdict: Dict[int,Member]) -> Tuple[bool,int,Optional[Tuple[int,int,float]]]:
+def homeframe_inputs_isvalid(numteams: str, memsper: str, olap: str, memsdict: Dict[int,Member],numleaders: int) -> Tuple[bool,int,Optional[Tuple[int,int,float]]]:
     try:
         numteams_int = int(numteams)
         if numteams_int < 1:
@@ -39,8 +39,10 @@ def homeframe_inputs_isvalid(numteams: str, memsper: str, olap: str, memsdict: D
     num_mems = len(memsdict)
     if numteams_int * memsper_int > num_mems:
         return False,3,None
+    if numteams_int > numleaders:
+        return False,4,None
 
-    return True,-1,(numteams_int,memsper_int,olap_flt)
+    return (True,-1,(numteams_int,memsper_int,olap_flt))
 
 def get_names_from_memids_tup(mem_ids: Tuple[Tuple[str]], mems_dict: Dict[int,Member]) -> List[str]:
     teams_strs = []

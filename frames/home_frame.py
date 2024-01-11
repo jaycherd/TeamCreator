@@ -201,7 +201,7 @@ class HomeFrame(BaseFrame):
         numteams = self.numteams_strvar.get()
         memsper = self.memsper_strvar.get()
         olap = self.hrolap_strvar.get()
-        res = fxns.homeframe_inputs_isvalid(numteams=numteams,memsper=memsper,olap=olap,memsdict=self.mems_dict)
+        res = fxns.homeframe_inputs_isvalid(numteams=numteams,memsper=memsper,olap=olap,memsdict=self.mems_dict,numleaders=len(self.group1))
         if res[0]:
             ### portion between these #### could be threaded, lots of calcs, need to be done ###################################################
             numteams,memsper,olap = res[2]
@@ -228,6 +228,8 @@ class HomeFrame(BaseFrame):
                 messagebox.showerror("Error", "make sure that the hrs of overlap is a valid number, ie: 0.00, 0.25, 0.50, 0.75, 1.00, 1.25, 1.50, etc...")
             elif res[1] == 3:
                 messagebox.showerror("Error", "invalid number of teams and members per team combo make sure number of teams * mems per <= total members")
+            elif res[1] == 4:
+                messagebox.showerror("Error",f"Too many teams, not enough leaders")
     
     def compare_button_clicked(self):
         valid_names = set()
@@ -236,7 +238,7 @@ class HomeFrame(BaseFrame):
         cmp_input_str = self.cmp_txt_widget.get('1.0',tk.END).rstrip('\n')
         chk_res = calcs.check_cmp_input(cmp_input_str,valid_names=valid_names)
         if chk_res[0] == -1:
-            messagebox.showerror("Error",f"Name '{chk_res[1]}' was found to be invalid," +
+            messagebox.showerror("Error",f"Name '{chk_res[1]}' not found," +
                                  "check your input files make sure you input name exactly same" +
                                  ", and make sure names match!")
         elif chk_res[0] == -2:
