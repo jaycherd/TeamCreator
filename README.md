@@ -3,7 +3,7 @@
 Application to take peoples availabilities and assign them to valid teams  
 
 ## Install
-- pip install tkinter
+- Python 3.12.2, make sure to install it with tk
 
 ## Usage
 - download everyones availability as a csv and make sure to save it to resources as "availability.csv"

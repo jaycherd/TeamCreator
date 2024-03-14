@@ -1,3 +1,4 @@
+import sys
 from typing import List,Optional
 
 from icecream import ic
@@ -9,6 +10,8 @@ from frames.home_frame import HomeFrame
 
 def main():
     names,avails,priorities = utils.initialize_mems()
+    # print(f"names: {names}\n\navails: {avails}\n\npriorities: {priorities}")
+    # sys.exit()
     # ic(names,avails,priorities)
     avails = utils.trim_availabilities(avails)
     # ic(avails)
