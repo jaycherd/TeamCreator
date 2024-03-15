@@ -12,8 +12,8 @@ eastartendarrs.pkl
 lastrun_groups.csv
 availability.csv
 group_priority.csv
-availability_template.csv
-group_priority_template.csv
+# availability_template.csv
+# group_priority_template.csv
 mems.json
 teamsets.json
 
