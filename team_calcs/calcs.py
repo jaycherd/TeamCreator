@@ -81,13 +81,6 @@ def generate_sets_of_teams(teams: Set[Tuple[str,...]],grp1: List[str],grp2: List
     add_team_to_set(tuple(), all_teams)
     
     return sets_of_teams
-    # sets_of_teams = set()
-    # # logic doesnt seem right below, take a look at old code
-    # for teamset in combinations(teams,num_teams):
-    #     if teamset_is_valid(teamset=teamset,grp3=grp3):
-    #         sets_of_teams.add(teamset)
-    # write_sets_to_json(fname=csts.JSON_TEAMSETS_FNAME,var=list(sets_of_teams))
-    # return sets_of_teams
 
 def getkey(team: Tuple[str,...]) -> str:
         currkey = ""

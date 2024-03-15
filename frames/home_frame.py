@@ -1,4 +1,5 @@
 import tkinter as tk
+import time
 from tkinter import messagebox
 from typing import List,Optional,Dict
 from threading import Thread
@@ -206,12 +207,16 @@ class HomeFrame(BaseFrame):
             ### portion between these #### could be threaded, lots of calcs, need to be done ###################################################
             numteams,memsper,olap = res[2]
             
+            start_time = time.perf_counter() #tmp
             self.teams = calcs.generate_teams(mems=self.members,grp1=self.group1,grp2=self.group2,
                              grp3=self.group3,team_size=memsper)
             self.sets_of_teams = calcs.generate_sets_of_teams(teams=self.teams,grp1=self.group1,
                                                      grp2=self.group2,
                                                      grp3=self.group3,
                                                      num_teams=numteams)
+            
+            end_time = time.perf_counter() #tmp
+            print(f"team/set generation took {end_time - start_time} seconds")
 
             team_intersection_map = calcs.intersect_team_avail_mins(teamsets=self.sets_of_teams,numteams=numteams,memsper=memsper,olap=olap,members=self.members,mems_dict=self.mems_dict)
             self.teamsets_tuple = tuple(self.sets_of_teams)
