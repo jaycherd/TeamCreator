@@ -22,16 +22,15 @@ def check_grp3(teams: Set[List[str]], grp3: List[str]) -> List[List[str]]:
 
 
 def generate_teams(mems: List[str],grp1: List[str],grp2: List[str],grp3: List[str],team_size: int) -> Set[Tuple[str,...]]:
-    teams = set()  
-    teams_nonset = []
-    leader_combinations = list(combinations(grp1, 1))
-    slots_taken = 1
+    
+    teams = set()
+    grp2_and_grp3 = grp2 + grp3
 
-    for other_mems in combinations(grp2+grp3,team_size-slots_taken):
-        for leader_comb in leader_combinations:
-            team=list(leader_comb) + list(other_mems)
-            teams.add(tuple(team))
-    teams = check_grp3(teams,grp3)
+    # Generate teams with at most one member from grp3
+    for leader in grp1:
+        for other_members in combinations(grp2_and_grp3, team_size - 1):
+            if sum(member in grp3 for member in other_members) <= 1:
+                teams.add((leader,) + other_members)
 
     return teams
 
@@ -67,12 +66,28 @@ def write_sets_to_json(fname: str, var: any) -> None:
 
 def generate_sets_of_teams(teams: Set[Tuple[str,...]],grp1: List[str],grp2: List[str], grp3: List[str],num_teams: int) -> Set[Tuple[Tuple[str,...],...]]:
     sets_of_teams = set()
-    # logic doesnt seem right below, take a look at old code
-    for teamset in combinations(teams,num_teams):
-        if teamset_is_valid(teamset=teamset,grp3=grp3):
-            sets_of_teams.add(teamset)
-    write_sets_to_json(fname=csts.JSON_TEAMSETS_FNAME,var=list(sets_of_teams))
+    def add_team_to_set(current_set, remaining_teams):
+        if len(current_set) == num_teams:
+            sets_of_teams.add(current_set)
+            return
+        
+        for team in remaining_teams:
+            new_set = current_set + (team,)
+            if teamset_is_valid(new_set, grp3):
+                next_teams = remaining_teams - {team}
+                add_team_to_set(new_set, next_teams)
+    
+    all_teams = set(teams)
+    add_team_to_set(tuple(), all_teams)
+    
     return sets_of_teams
+    # sets_of_teams = set()
+    # # logic doesnt seem right below, take a look at old code
+    # for teamset in combinations(teams,num_teams):
+    #     if teamset_is_valid(teamset=teamset,grp3=grp3):
+    #         sets_of_teams.add(teamset)
+    # write_sets_to_json(fname=csts.JSON_TEAMSETS_FNAME,var=list(sets_of_teams))
+    # return sets_of_teams
 
 def getkey(team: Tuple[str,...]) -> str:
         currkey = ""
