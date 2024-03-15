@@ -7,6 +7,7 @@ number_of_teams = 3
 minDaysOverlap = 1
 # the min num hours of overlap
 MIN_HRS_OLAP = 2
+
 # the name of the csv file
 csv_avail_fname = 'resources/availability.csv'
 csv_pri_fname = 'resources/group_priority.csv'
