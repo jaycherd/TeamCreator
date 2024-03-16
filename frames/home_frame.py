@@ -220,6 +220,9 @@ class HomeFrame(BaseFrame):
             self.teamsets_tuple = tuple(self.sets_of_teams)
             id_teamsets_w_val_olap = calcs.find_teams_w_olap(teams_intersected_map=team_intersection_map,mems_dict=self.mems_dict,teamsets=self.teamsets_tuple,olap=olap)
             teamset_to_startend_map = calcs.convert_team_intersections(teams_intersected_map=team_intersection_map,mems_dict=self.mems_dict,teamsets=self.teamsets_tuple,teamset_ids=id_teamsets_w_val_olap)
+            
+            end_time_all = time.perf_counter()
+            print(f"team/set overall took -> {end_time_all - start_time} seconds")
             self.view_teams_modal_window(teamset_to_startend_map,olap)
             ######################################################################################################################################            
         else:
