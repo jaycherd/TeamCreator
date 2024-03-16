@@ -21,18 +21,52 @@ def check_grp3(teams: Set[List[str]], grp3: List[str]) -> List[List[str]]:
     return res
 
 
-def generate_teams(mems: List[str],grp1: List[str],grp2: List[str],grp3: List[str],team_size: int) -> Set[Tuple[str,...]]:
-    
+    # team_intersected = {} #key is str(mem_id) + str(mem_id of other mems) val is result of intersection
+    # for teamset in teamsets:
+    #     for team in teamset:
+    #         sets = []#will be a list of sets
+    #         teamkey = getkey(team)
+    #         if teamkey in team_intersected:
+    #             intersection_res = team_intersected[teamkey]
+    #         else:
+    #             for mem in team:
+    #                 member = mems_dict.get(int(mem))
+    #                 sets.append(member.available_minutes)
+    #             intersection_res = set.intersection(*sets) #should intersect all the sets in the list at once! lit
+    #             team_intersected[teamkey] = intersection_res
+    # return team_intersected
+def getkey(team: Tuple[str,...]) -> str:
+        currkey = ""
+        for mem in team:
+            currkey += mem
+        return currkey
+
+def generate_teams(mems: List[str],grp1: List[str],grp2: List[str],grp3: List[str],
+                   team_size: int,mems_dict: Dict[int,Member],olap: float) -> Tuple[Set[Tuple[str,...]],Dict[Tuple[str,...],Set[str]]]:
+    teams_intersected : Dict[Tuple[str,...],Set[str]] = {}
+    def check_team(team: Tuple[str,...],mems_dict: Dict[int,Member],olap: float) -> bool:
+        avails = set()
+        # Collect the sets of available minutes for each team member
+        sets_of_avails : List[Set[str]] = [mems_dict[int(mem_id)].available_minutes for mem_id in team]
+        # Use set.intersection to find the common availability
+        common_avails : Set[str] = set.intersection(*sets_of_avails)
+        if len(common_avails) < olap*60:
+            return False
+        nonlocal teams_intersected
+        teams_intersected[getkey(team)] = common_avails
+        return True
     teams = set()
     grp2_and_grp3 = grp2 + grp3
 
     # Generate teams with at most one member from grp3
     for leader in grp1:
         for other_members in combinations(grp2_and_grp3, team_size - 1):
-            if sum(member in grp3 for member in other_members) <= 1:
+            team = (leader,) + other_members
+            if sum(member in grp3 for member in other_members) <= 1 and check_team(team,mems_dict,olap):
                 teams.add((leader,) + other_members)
 
-    return teams
+    print(f"gen {len(teams)} teams")
+    return (teams, teams_intersected)
 
 def teamset_is_valid(teamset: Tuple[Tuple[str,...],...],grp3: List[str]) -> bool:
     mem_occs = Counter()
@@ -66,64 +100,36 @@ def write_sets_to_json(fname: str, var: any) -> None:
 
 def generate_sets_of_teams(teams: Set[Tuple[str,...]],grp1: List[str],grp2: List[str], grp3: List[str],num_teams: int) -> Set[Tuple[Tuple[str,...],...]]:
     sets_of_teams = set()
+    num_sets_gen = 0
     def add_team_to_set(current_set, remaining_teams):
+        nonlocal num_sets_gen
         if len(current_set) == num_teams:
             sets_of_teams.add(current_set)
+            num_sets_gen += 1
+            if num_sets_gen == csts.NUM_SETS_TO_GEN:
+                raise StopIteration
             return
         
         for team in remaining_teams:
             new_set = current_set + (team,)
             if teamset_is_valid(new_set, grp3):
                 next_teams = remaining_teams - {team}
-                add_team_to_set(new_set, next_teams)
+                try:
+                    add_team_to_set(new_set, next_teams)
+                except StopIteration:
+                    raise StopIteration
+                if num_sets_gen == csts.NUM_SETS_TO_GEN:
+                    break
     
     all_teams = set(teams)
-    add_team_to_set(tuple(), all_teams)
+    try:
+        add_team_to_set(tuple(), all_teams)
+    except StopIteration:
+        print(f"Sets generated was restricted by utility/constants.py variable -> NUM_SETS_TO_GEN, set to {csts.NUM_SETS_TO_GEN}")
     
+    print(f"permutations of teams -> {len(sets_of_teams)}")
     return sets_of_teams
 
-def getkey(team: Tuple[str,...]) -> str:
-        currkey = ""
-        for mem in team:
-            currkey += mem
-        return currkey
-
-def intersect_team_avail_mins(teamsets: Set[Tuple[Tuple[str,...],...]],numteams: str, memsper: str, olap: str, members: List[Member],mems_dict: Dict[int,Member]) -> Dict[str,Set[str]]:
-    #okay so members now have an additional attribute --> a set, the set is of every single minute that that person is available
-    #gotten by turning their start and end times into avail minutes
-    #idea: use that set, and perform intersection on members,
-    #optimization: intersection between two mems that result in zero common time, should not be performed again, maybe as i am
-    #performing intersection, i should store in a map, the result of two mems getting intersected
-    #then before intersecting two mems, check if its been done yet if has then just
-    #use that value rather than intersecting it again
-    #initially an easier intersection may be if two mems, have ZERO common time, then store them in a zero_common_map and if you come across
-    #then break and dont do any calcs, this optimization might be worth finding in the beginning which mems have no common
-    #altho i do think be better to find this as we go through the calcs
-    #a lot to think about, how can this be impl...
-    team_intersected = {} #key is str(mem_id) + str(mem_id of other mems) val is result of intersection
-    for teamset in teamsets:
-        for team in teamset:
-            sets = []#will be a list of sets
-            teamkey = getkey(team)
-            if teamkey in team_intersected:
-                intersection_res = team_intersected[teamkey]
-            else:
-                for mem in team:
-                    member = mems_dict.get(int(mem))
-                    sets.append(member.available_minutes)
-                intersection_res = set.intersection(*sets) #should intersect all the sets in the list at once! lit
-                team_intersected[teamkey] = intersection_res
-    return team_intersected
-    #next probs check if the intersection creates a valid amount of overlapping minutes, could probs just divide by 60 and check whether this float is 
-    #greater than user input float
-    #maybe some checking that its working and what not first
-    #if this works good, maybe ill just keep as is, and have teamkeys map to an intersection of the minutes overlap,
-    #that way, i can later iterate through the team_intersected map to check whether intersections make a valid team or not..?
-    #swag yeah that seemed to work, so lets do it like that, also i noticed that there were five empty sets, this will help with shortcutting
-    #now i can call another function, with the map team_intersected, actually lets return the map, to the gui, the from homeframe
-    #call another fxn with that returned map, and that fxn will find all the sets with valid overlap and return them.. wait so the other fxn
-    #will also ned the teamsets.. then do the same shortcut via my map, except this time, every teamkey should be in the map, so we can lookup
-    #all the vals without doing any intersecting of giant sets..
 
 def find_teams_w_olap(teams_intersected_map: Dict[str,Set[str]],mems_dict: Dict[int,Member],teamsets: Tuple[Tuple[Tuple[str,...],...]],olap: float) -> Tuple[int]:
     #rtype: List[int] -> nums correspond to teamset_ids found to be valid
@@ -168,9 +174,6 @@ def compress_intrsxn(sorted_intrsxn: Tuple[str]) -> Tuple[Tuple[str]]:
     ends.append(sorted_intrsxn[-1])
     return (tuple(starts),tuple(ends))
 
-
-
-
 def convert_intersection(intrsxn: Set[str]) -> Tuple[Tuple[str]]:
     sorted_intrsxn = sort_intrsxn(intrsxn=intrsxn)
     compressed_intrsxn = compress_intrsxn(sorted_intrsxn)
@@ -178,6 +181,34 @@ def convert_intersection(intrsxn: Set[str]) -> Tuple[Tuple[str]]:
 
 def convert_team_intersections(teams_intersected_map: Dict[str,Set[str]],mems_dict: Dict[int,Member], teamsets: Tuple[Tuple[Tuple[str,...],...]],teamset_ids: Tuple[int]) -> Dict[int,Tuple[Tuple[str]]]:
     #rtype: Dict[key=teamset_id,val=List[List[str]] = the common start,end avails, row = day, evencols = start olap, oddcols = end olap]
+    # res_dict = {}
+    # for i,(k,v) in enumerate(teams_intersected_map.items()):
+    #     start_end_tups = []
+    #     for team in v:
+    #         # print(f"k -> {k}, type k is -> {type(k)}")
+    #         # print(f"v -> {v}, type v is {type(v)}")
+    #         # exit()
+    #         start_end_tup = convert_intersection(teams_intersected_map[k])
+    #         start_end_tups.append(start_end_tup)
+    #     res_dict[i] = tuple(start_end_tups)
+    # return res_dict
+    
+    
+    # res_dict = {}
+    # for perm in teamsets:
+    #     start_end_tups = []
+    #     for team in perm:
+    #         start_end_tup = convert_intersection(team)
+    #         start_end_tups.append(start_end_tup)
+    #     res_dict[team] = tuple(start_end_tups)
+    # return res_dict
+
+    
+    # print(teamsets)
+    # print(teamset_ids)
+    # exit()
+
+
     res_dict = {}
     for teamset_id in teamset_ids:
         teams = teamsets[teamset_id]
@@ -188,6 +219,7 @@ def convert_team_intersections(teams_intersected_map: Dict[str,Set[str]],mems_di
             start_end_tup = convert_intersection(intrsxn=intersxn)
             start_end_tups.append(start_end_tup)
         res_dict[teamset_id] = tuple(start_end_tups)
+    # print(res_dict)
     return res_dict
 
 """0 = success, 1 = error"""
@@ -217,3 +249,24 @@ def find_cmp_olap(ids: List[int], mems_dict: Dict[int,Member]) -> Set[str]:
         sets.append(member.available_minutes)
     return set.intersection(*sets) #should intersect all the sets in the list at once! lit
 
+
+# deprecated
+# this is now done during generation of teams to avoid creating teams that dont have valid overlap
+# decreasing time by stopping generation of unneccessary sets
+# def intersect_team_avail_mins(teamsets: Set[Tuple[Tuple[str,...],...]],numteams: str, memsper: str, olap: str, members: List[Member],mems_dict: Dict[int,Member]) -> Dict[str,Set[str]]:
+#     #okay so members now have an additional attribute --> a set, the set is of every single minute that that person is available
+#     #gotten by turning their start and end times into avail minutes
+#     team_intersected = {} #key = str(mem_id) + str(mem_id of other mems), val = result of intersection
+#     for teamset in teamsets:
+#         for team in teamset:
+#             sets = []#will be a list of sets
+#             teamkey = getkey(team)
+#             if teamkey in team_intersected:
+#                 intersection_res = team_intersected[teamkey]
+#             else:
+#                 for mem in team:
+#                     member = mems_dict.get(int(mem))
+#                     sets.append(member.available_minutes)
+#                 intersection_res = set.intersection(*sets) #should intersect all the sets in the list at once! lit
+#                 team_intersected[teamkey] = intersection_res
+#     return team_intersected

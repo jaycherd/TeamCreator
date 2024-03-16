@@ -208,8 +208,8 @@ class HomeFrame(BaseFrame):
             numteams,memsper,olap = res[2]
             
             start_time = time.perf_counter() #tmp
-            self.teams = calcs.generate_teams(mems=self.members,grp1=self.group1,grp2=self.group2,
-                             grp3=self.group3,team_size=memsper)
+            self.teams,team_intersection_map = calcs.generate_teams(mems=self.members,grp1=self.group1,grp2=self.group2,
+                             grp3=self.group3,team_size=memsper,mems_dict=self.mems_dict,olap=olap)
             self.sets_of_teams = calcs.generate_sets_of_teams(teams=self.teams,grp1=self.group1,
                                                      grp2=self.group2,
                                                      grp3=self.group3,
@@ -218,11 +218,20 @@ class HomeFrame(BaseFrame):
             end_time = time.perf_counter() #tmp
             print(f"team/set generation took {end_time - start_time} seconds")
 
-            team_intersection_map = calcs.intersect_team_avail_mins(teamsets=self.sets_of_teams,numteams=numteams,memsper=memsper,olap=olap,members=self.members,mems_dict=self.mems_dict)
+            print(type(self.sets_of_teams))
+
+            # team_intersection_map = calcs.intersect_team_avail_mins(teamsets=self.sets_of_teams,numteams=numteams,memsper=memsper,olap=olap,members=self.members,mems_dict=self.mems_dict)
             self.teamsets_tuple = tuple(self.sets_of_teams)
             id_teamsets_w_val_olap = calcs.find_teams_w_olap(teams_intersected_map=team_intersection_map,mems_dict=self.mems_dict,teamsets=self.teamsets_tuple,olap=olap)
+            
             teamset_to_startend_map = calcs.convert_team_intersections(teams_intersected_map=team_intersection_map,mems_dict=self.mems_dict,teamsets=self.teamsets_tuple,teamset_ids=id_teamsets_w_val_olap)
+            # print(teamset_to_startend_map)
+            # exit()
+
+            end_time_overall = time.perf_counter() #tmp
+            print(f"all set generation fxns took {end_time_overall - start_time} seconds")
             self.view_teams_modal_window(teamset_to_startend_map,olap)
+            
             ######################################################################################################################################            
         else:
             if res[1] == 0:
