@@ -10,6 +10,7 @@ LIGHTRED = "#ed5353"
 FRAMEBORDER_CLR = "#0c112b"
 MYDARKTEAL = "#1f3f45"
 
+HUGEFONT = ("Times New Roman",64)
 BIGFONT = ("Times New Roman",24)
 FONT = ("Times New Roman",16)
 TINYFONT = ("Times New Roman",2)

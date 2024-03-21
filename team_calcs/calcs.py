@@ -74,7 +74,7 @@ def generate_teams(mems: List[str],grp1: List[str],grp2: List[str],grp3: List[st
             if sum(member in grp3 for member in other_members) <= 1 and check_team(team,mems_dict,olap):
                 teams.add((leader,) + other_members)
 
-    print(f"gen {len(teams)} teams")
+    print(f"generated {len(teams)} teams")
     return (teams, teams_intersected)
 
 def teamset_is_valid(teamset: Tuple[Tuple[str,...],...],grp3: List[str]) -> bool:

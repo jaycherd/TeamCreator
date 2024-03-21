@@ -136,6 +136,11 @@ class HomeFrame(BaseFrame):
             scrollbar.configure(orient=tk.VERTICAL)
             scrollbar.grid(row=row,column=col,sticky=tk.N+tk.S)
         return scrollbar
+    
+    def addchkbtn(self,parent,boolvar,row,col):
+        check_btn = tk.Checkbutton(parent,variable=boolvar)
+        check_btn.configure(bg=cdash.BG_COLOR,fg=cdash.MY_BLUE,font=cdash.FONT,width=cdash.SB_W)
+        check_btn.grid(row=row,column=col)
 
     def setup_topleft_frame(self):
         self.addlbl(self.topleft_frame,txt="Group 01")
@@ -175,6 +180,11 @@ class HomeFrame(BaseFrame):
         self.hrolap_strvar.set(csts.MIN_HRS_OLAP)
         self.addspinbox(self.bottomleft_frame,style='grid',row=4,col=1,sticky='E',min=0,maks=100,incr=0.25,format='%.2f',stvar=self.hrolap_strvar)
     
+        auto_hr_txt       = "Auto Hrs:   "
+        self.addlbl(self.bottomleft_frame,txt=auto_hr_txt,location=tk.TOP,font=cdash.FONT,style='grid',row=5,col=0,sticky='W',padx=cdash.PADX)
+        self.auto_boolvar = tk.BooleanVar(self.bottomleft_frame,value=False)
+        self.addchkbtn(self.bottomleft_frame,self.auto_boolvar,row=5,col=1)
+
     def setup_bottommid_frame(self):
         self.bottommid_innertop_frame = self.create_styled_frame(self.bottommid_frame,relx=0,rely=0,relwidth=1,relheight=.65,border=False,place=False)
         self.bottommid_innerbot_frame = self.create_styled_frame(self.bottommid_frame,relx=0,rely=.65,relwidth=1,relheight=.45,border=False,place=False)
@@ -202,21 +212,58 @@ class HomeFrame(BaseFrame):
         numteams = self.numteams_strvar.get()
         memsper = self.memsper_strvar.get()
         olap = self.hrolap_strvar.get()
-        res = fxns.homeframe_inputs_isvalid(numteams=numteams,memsper=memsper,olap=olap,memsdict=self.mems_dict,numleaders=len(self.group1))
+        auto = self.auto_boolvar.get()
+        res = fxns.homeframe_inputs_isvalid(numteams=numteams,memsper=memsper,olap=olap,memsdict=self.mems_dict,numleaders=len(self.group1),auto=auto)
+        def helper(olap):
+            start_time = time.perf_counter() #tmp
+            print(f"\nCalculating with {olap} hrs...")
+            tmp_tup = calcs.generate_teams(mems=self.members,
+                                           grp1=self.group1,
+                                           grp2=self.group2,
+                                           grp3=self.group3,
+                                           team_size=memsper,
+                                           mems_dict=self.mems_dict,
+                                           olap=olap)
+            self.teams,self.teamstr_to_startend_intersection_map = tmp_tup
+            self.sets_of_teams = set()
+            self.sets_of_teams = calcs.generate_sets_of_teams(teams=self.teams,
+                                                              grp1=self.group1,
+                                                              grp2=self.group2,
+                                                              grp3=self.group3,
+                                                              num_teams=numteams)
+            
+            end_time = time.perf_counter() #tmp
+            print(f"team/set generation took {round(end_time - start_time,5)} seconds")
         if res[0]:
             ### portion between these #### could be threaded, lots of calcs, need to be done ###################################################
             numteams,memsper,olap = res[2]
-            
-            start_time = time.perf_counter() #tmp
-            self.teams,self.teamstr_to_startend_intersection_map = calcs.generate_teams(mems=self.members,grp1=self.group1,grp2=self.group2,
-                             grp3=self.group3,team_size=memsper,mems_dict=self.mems_dict,olap=olap)
-            self.sets_of_teams = calcs.generate_sets_of_teams(teams=self.teams,grp1=self.group1,
-                                                     grp2=self.group2,
-                                                     grp3=self.group3,
-                                                     num_teams=numteams)
-            
-            end_time = time.perf_counter() #tmp
-            print(f"team/set generation took {end_time - start_time} seconds")
+            start_time_overall = time.perf_counter()
+            if auto:
+                upper_bound = 1 #start at 1 hour, double it til no permutations found
+                lower_bound = 0
+                best_olap = 0 # best overlap found so far
+                permutation_found = True
+                while True:
+                    helper(upper_bound)
+                    if not self.sets_of_teams:
+                        break
+                    best_olap = upper_bound
+                    lower_bound = upper_bound
+                    upper_bound *= 2
+                # upper bound = hrs where no olap found, lower bound is last valid point or 0
+                while upper_bound - lower_bound > 0.01:
+                    mid_point = (lower_bound + upper_bound) / 2
+                    helper(mid_point)
+                    if self.sets_of_teams:
+                        best_olap = max(mid_point,best_olap)
+                        lower_bound = mid_point
+                    else:
+                        upper_bound = mid_point
+                olap = best_olap
+                helper(olap)
+            else:
+                helper(olap)
+
 
             # self.teamstr_to_startend_intersection_map = calcs.intersect_team_avail_mins(teamsets=self.sets_of_teams,numteams=numteams,memsper=memsper,olap=olap,members=self.members,mems_dict=self.mems_dict)
             self.teamsets_tuple = tuple(self.sets_of_teams)            
@@ -230,7 +277,7 @@ class HomeFrame(BaseFrame):
             # print(f"\n\nteamset to startend map -> {teamset_to_startend_map}")
 
             end_time_overall = time.perf_counter() #tmp
-            print(f"all set generation fxns took {end_time_overall - start_time} seconds")
+            print(f"all set generation fxns took {round(end_time_overall - start_time_overall,5)} seconds")
 
             self.view_teams_modal_window(teamset_to_startend_map,olap)
             
@@ -242,11 +289,13 @@ class HomeFrame(BaseFrame):
             elif res[1] == 1:
                 messagebox.showerror("Error", "make sure the members per team is a valid number, ie: 1, 2, 3, 4, 5, 6, etc...")
             elif res[1] == 2:
-                messagebox.showerror("Error", "make sure that the hrs of overlap is a valid number, ie: 0.00, 0.01, 0.02, 0.03, etc...")
+                messagebox.showerror("Error", "make sure that the hrs of overlap is a valid number, ie: 0.01, 0.02, 0.03, 1.00, 1.01, etc...")
             elif res[1] == 3:
                 messagebox.showerror("Error", "invalid number of teams and members per team combo make sure number of teams * mems per <= total members")
             elif res[1] == 4:
                 messagebox.showerror("Error",f"Too many teams, not enough leaders")
+            elif res[1] == 5:
+                messagebox.showerror("Error", f"auto should only be either True or False but found to be {res[2]}")
     
     def compare_button_clicked(self):
         valid_names = set()
