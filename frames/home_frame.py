@@ -219,11 +219,18 @@ class HomeFrame(BaseFrame):
             print(f"team/set generation took {end_time - start_time} seconds")
 
             print(type(self.sets_of_teams))
+            print(f"set of teams -> {self.sets_of_teams}")
+
 
             # self.teamstr_to_startend_intersection_map = calcs.intersect_team_avail_mins(teamsets=self.sets_of_teams,numteams=numteams,memsper=memsper,olap=olap,members=self.members,mems_dict=self.mems_dict)
             self.teamsets_tuple = tuple(self.sets_of_teams)
+
+            ## left off here!
+
             id_teamsets_w_val_olap = calcs.find_teams_w_olap(teams_intersected_map=self.teamstr_to_startend_intersection_map,mems_dict=self.mems_dict,teamsets=self.teamsets_tuple,olap=olap)
+            # id_teamsets_w_val_olap = 
             
+
             print(f"id teamsets with overlap -> {id_teamsets_w_val_olap}")
             print(f"\n\n\nteam intersection map -> {self.teamstr_to_startend_intersection_map}")
             # exit()
@@ -292,7 +299,7 @@ class HomeFrame(BaseFrame):
         counter = 1
         #next have to fill txt widget with teams and their common time
         for key,val in teamstr_to_startend_map.items():
-            team_mems_strs = fxns.get_names_from_memids_tup(self.teamsets_tuple[key],self.mems_dict)
+            team_mems_strs = fxns.get_names_from_memids_tup(self.teamsets_tuple[int(key)],self.mems_dict)
             txt = f"\nTeamSet {counter}\n"
             counter += 1
             txtwidget.insert(tk.END,txt)
