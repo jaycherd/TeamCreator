@@ -140,7 +140,7 @@ def generate_sets_of_teams(teams: Set[Tuple[str,...]],grp1: List[str],grp2: List
         print(f"Team permutations generated was restricted by " +
               "utility/constants.py variable -> NUM_SETS_TO_GEN," +
               f" set to {csts.NUM_SETS_TO_GEN},\nNOTE: worst case" +
-              f"{len(sets_of_teams)} teams could make {worst_case}" +
+              f" {len(teams)} teams could make {worst_case}" +
               " permutations, which could take a long time" +
               ", consider increasing overlap")
     

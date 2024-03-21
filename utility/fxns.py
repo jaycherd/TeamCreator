@@ -1,6 +1,6 @@
 import csv
 import json
-from typing import List,Tuple
+from typing import List,Tuple,Dict,Set
 
 from icecream import ic
 from utility import constants as csts
@@ -49,7 +49,7 @@ def get_avails_prl(avail_data: List[List[int]],names: List[str]) -> List[List[st
 
 
 
-def initialize_mems(avail_fname=csts.csv_avail_fname,priority_fname=csts.csv_pri_fname) -> Tuple[List[str],List[List[List[str]]],List[str]]:
+def initialize_mems(avail_fname=csts.csv_avail_fname,priority_fname=csts.csv_pri_fname) -> Tuple[List[str],List[List[List[str]]],List[str],Dict[str,int]]:
     """
     create three lists - parallel
     1. name
@@ -58,6 +58,14 @@ def initialize_mems(avail_fname=csts.csv_avail_fname,priority_fname=csts.csv_pri
     returns as Tuple in order specified above
     NOTE: avail contains header, pri does not
     """
+    def get_pri_map(pri_data: List[List[str]],names:Set[str]) -> Dict[str,int]:
+        res = {}
+        for pri,line in enumerate(pri_data):
+            for name in line[1:]:
+                if name == '' or name not in names:
+                    continue
+                res[name] = pri + 1
+        return res
     with open(avail_fname,'r',encoding='UTF-8') as file:
         reader = csv.reader(file)
         avail_data = list(reader) # creates List[List[availabilities: str]] - List[List[0]] = name, List[0] = header
@@ -66,8 +74,9 @@ def initialize_mems(avail_fname=csts.csv_avail_fname,priority_fname=csts.csv_pri
         reader = csv.reader(file)
         pri_data = list(reader)
     priorities = get_pri_prl(pri_data=pri_data,names=names)
+    priorities_map = get_pri_map(pri_data=pri_data,names=set(names))
     avails = get_avails_prl(avail_data=avail_data,names=names)
-    return ((names,avails,priorities))
+    return ((names,avails,priorities,priorities_map))
 
 
 def trim_availabilities(avails: List[List[List[str]]]) -> List[List[List[str]]]:

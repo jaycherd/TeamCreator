@@ -9,7 +9,7 @@ from frames.home_frame import HomeFrame
 
 
 def main():
-    names,avails,priorities = utils.initialize_mems()
+    names,avails,priorities,pri_map = utils.initialize_mems()
     # print(f"names: {names}\n\navails: {avails}\n\npriorities: {priorities}")
     # sys.exit()
     # ic(names,avails,priorities)
@@ -18,7 +18,7 @@ def main():
     members: List[Optional[Member]] = [None for _ in range(len(names))]
     prl_ptr = 0
     while prl_ptr < len(names):
-        member = Member(name=names[prl_ptr],avail_matrix=avails[prl_ptr],priority=priorities[prl_ptr])
+        member = Member(name=names[prl_ptr],avail_matrix=avails[prl_ptr],priority=pri_map[names[prl_ptr]])
         members[prl_ptr] = member
         prl_ptr += 1
     members_dict = {member.member_id: member for member in members}
