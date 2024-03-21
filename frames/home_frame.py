@@ -242,7 +242,7 @@ class HomeFrame(BaseFrame):
             elif res[1] == 1:
                 messagebox.showerror("Error", "make sure the members per team is a valid number, ie: 1, 2, 3, 4, 5, 6, etc...")
             elif res[1] == 2:
-                messagebox.showerror("Error", "make sure that the hrs of overlap is a valid number, ie: 0.00, 0.25, 0.50, 0.75, 1.00, 1.25, 1.50, etc...")
+                messagebox.showerror("Error", "make sure that the hrs of overlap is a valid number, ie: 0.00, 0.01, 0.02, 0.03, etc...")
             elif res[1] == 3:
                 messagebox.showerror("Error", "invalid number of teams and members per team combo make sure number of teams * mems per <= total members")
             elif res[1] == 4:

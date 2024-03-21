@@ -31,9 +31,9 @@ def homeframe_inputs_isvalid(numteams: str, memsper: str, olap: str, memsdict: D
         olap_flt = float(olap)
         if olap_flt < 0:
             return False,2,None
-        if not (olap_flt*4).is_integer():
-            return False,2,None
     except ValueError:
+        return False,2,None
+    except FloatingPointError:
         return False,2,None
     
     num_mems = len(memsdict)
