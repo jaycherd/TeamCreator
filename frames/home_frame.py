@@ -1,5 +1,6 @@
 import time
 import tkinter as tk
+import time
 from tkinter import messagebox
 from typing import List,Optional,Dict
 from threading import Thread
@@ -207,23 +208,34 @@ class HomeFrame(BaseFrame):
             ### portion between these #### could be threaded, lots of calcs, need to be done ###################################################
             numteams,memsper,olap = res[2]
             
-            start_time = time.perf_counter()
-            self.teams = calcs.generate_teams(mems=self.members,grp1=self.group1,grp2=self.group2,
-                             grp3=self.group3,team_size=memsper)
+            start_time = time.perf_counter() #tmp
+            self.teams,self.teamstr_to_startend_intersection_map = calcs.generate_teams(mems=self.members,grp1=self.group1,grp2=self.group2,
+                             grp3=self.group3,team_size=memsper,mems_dict=self.mems_dict,olap=olap)
             self.sets_of_teams = calcs.generate_sets_of_teams(teams=self.teams,grp1=self.group1,
                                                      grp2=self.group2,
                                                      grp3=self.group3,
                                                      num_teams=numteams)
-            end_time = time.perf_counter()
-            print(f"team/set gen took {end_time-start_time} seconds")
-            team_intersection_map = calcs.intersect_team_avail_mins(teamsets=self.sets_of_teams,numteams=numteams,memsper=memsper,olap=olap,members=self.members,mems_dict=self.mems_dict)
-            self.teamsets_tuple = tuple(self.sets_of_teams)
-            id_teamsets_w_val_olap = calcs.find_teams_w_olap(teams_intersected_map=team_intersection_map,mems_dict=self.mems_dict,teamsets=self.teamsets_tuple,olap=olap)
-            teamset_to_startend_map = calcs.convert_team_intersections(teams_intersected_map=team_intersection_map,mems_dict=self.mems_dict,teamsets=self.teamsets_tuple,teamset_ids=id_teamsets_w_val_olap)
             
-            end_time_all = time.perf_counter()
-            print(f"team/set overall took -> {end_time_all - start_time} seconds")
+            end_time = time.perf_counter() #tmp
+            print(f"team/set generation took {end_time - start_time} seconds")
+
+            # self.teamstr_to_startend_intersection_map = calcs.intersect_team_avail_mins(teamsets=self.sets_of_teams,numteams=numteams,memsper=memsper,olap=olap,members=self.members,mems_dict=self.mems_dict)
+            self.teamsets_tuple = tuple(self.sets_of_teams)            
+
+            # print(f"\n\n\nteam intersection map -> {self.teamstr_to_startend_intersection_map}")
+
+            """this indexes the dictionary which should no longer be necessary as all the teams that we determine
+            to be valid will automatically be valid at this point because when we generate sets we only use valid teams\
+            and we delete duplicates so no more checking needs to happen and we should probs skip this all together"""
+            teamset_to_startend_map = calcs.convert_team_intersections(teams_intersected_map=self.teamstr_to_startend_intersection_map,mems_dict=self.mems_dict,teamsets=self.teamsets_tuple)
+            # print(f"\n\nteamset to startend map -> {teamset_to_startend_map}")
+
+            end_time_overall = time.perf_counter() #tmp
+            print(f"all set generation fxns took {end_time_overall - start_time} seconds")
+
             self.view_teams_modal_window(teamset_to_startend_map,olap)
+            
+            
             ######################################################################################################################################            
         else:
             if res[1] == 0:
@@ -262,16 +274,16 @@ class HomeFrame(BaseFrame):
 
 
 
-    def view_teams_modal_window(self,teamset_to_startend_map,olap):
+    def view_teams_modal_window(self,teamstr_to_startend_map,olap):
         modal_win = self.make_modal_window(title="Teams")
         scrollbar = self.addscrollbar(modal_win)
-        txt = f"Found {len(teamset_to_startend_map)} team sets with {olap} hours in common\n"
+        txt = f"Found {len(teamstr_to_startend_map)} team sets with {olap} hours in common\n"
         txtwidget = self.addtxt(modal_win,txt=txt,location=tk.LEFT,yscrlcmd=scrollbar.set,disable=False)
 
         counter = 1
         #next have to fill txt widget with teams and their common time
-        for key,val in teamset_to_startend_map.items():
-            team_mems_strs = fxns.get_names_from_memids_tup(self.teamsets_tuple[key],self.mems_dict)
+        for key,val in teamstr_to_startend_map.items():
+            team_mems_strs = fxns.get_names_from_memids_tup(self.teamsets_tuple[int(key)],self.mems_dict)
             txt = f"\nTeamSet {counter}\n"
             counter += 1
             txtwidget.insert(tk.END,txt)
@@ -279,6 +291,8 @@ class HomeFrame(BaseFrame):
             for i,team_mems_str in enumerate(team_mems_strs):
                 if i != 0:
                     txtwidget.insert(tk.END,'\n')
+                # print(f"\nteam mems str -> {team_mems_str}\nval -> {val[i]}\nval -> {val}" +
+                #       f"\nkey -> {key}")
                 txt2 = f"[{team_mems_str}]:\n{fxns.draw_start_end(val[i])}"
                 txtwidget.insert(tk.END,txt2)
             txtwidget.insert(tk.END,'\n')
