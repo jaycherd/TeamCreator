@@ -208,7 +208,7 @@ class HomeFrame(BaseFrame):
             numteams,memsper,olap = res[2]
             
             start_time = time.perf_counter() #tmp
-            self.teams,team_intersection_map = calcs.generate_teams(mems=self.members,grp1=self.group1,grp2=self.group2,
+            self.teams,self.teamstr_to_startend_intersection_map = calcs.generate_teams(mems=self.members,grp1=self.group1,grp2=self.group2,
                              grp3=self.group3,team_size=memsper,mems_dict=self.mems_dict,olap=olap)
             self.sets_of_teams = calcs.generate_sets_of_teams(teams=self.teams,grp1=self.group1,
                                                      grp2=self.group2,
@@ -220,17 +220,30 @@ class HomeFrame(BaseFrame):
 
             print(type(self.sets_of_teams))
 
-            # team_intersection_map = calcs.intersect_team_avail_mins(teamsets=self.sets_of_teams,numteams=numteams,memsper=memsper,olap=olap,members=self.members,mems_dict=self.mems_dict)
+            # self.teamstr_to_startend_intersection_map = calcs.intersect_team_avail_mins(teamsets=self.sets_of_teams,numteams=numteams,memsper=memsper,olap=olap,members=self.members,mems_dict=self.mems_dict)
             self.teamsets_tuple = tuple(self.sets_of_teams)
-            id_teamsets_w_val_olap = calcs.find_teams_w_olap(teams_intersected_map=team_intersection_map,mems_dict=self.mems_dict,teamsets=self.teamsets_tuple,olap=olap)
+            id_teamsets_w_val_olap = calcs.find_teams_w_olap(teams_intersected_map=self.teamstr_to_startend_intersection_map,mems_dict=self.mems_dict,teamsets=self.teamsets_tuple,olap=olap)
             
-            teamset_to_startend_map = calcs.convert_team_intersections(teams_intersected_map=team_intersection_map,mems_dict=self.mems_dict,teamsets=self.teamsets_tuple,teamset_ids=id_teamsets_w_val_olap)
-            # print(teamset_to_startend_map)
+            print(f"id teamsets with overlap -> {id_teamsets_w_val_olap}")
+            print(f"\n\n\nteam intersection map -> {self.teamstr_to_startend_intersection_map}")
+            # exit()
+
+            """this indexes the dictionary which should no longer be necessary as all the teams that we determine
+            to be valid will automatically be valid at this point because when we generate sets we only use valid teams\
+            and we delete duplicates so no more checking needs to happen and we should probs skip this all together"""
+            teamset_to_startend_map = calcs.convert_team_intersections(teams_intersected_map=self.teamstr_to_startend_intersection_map,mems_dict=self.mems_dict,teamsets=self.teamsets_tuple,teamset_ids=id_teamsets_w_val_olap)
+
+            teamset_to_startend_map = calcs.convert_team_intersections(teams_intersected_map=self.teamstr_to_startend_intersection_map,mems_dict=self.mems_dict,teamsets=self.teamsets_tuple,teamset_ids=id_teamsets_w_val_olap)
+            print(f"\n\n\nteamset to startend map -> {teamset_to_startend_map}")
             # exit()
 
             end_time_overall = time.perf_counter() #tmp
             print(f"all set generation fxns took {end_time_overall - start_time} seconds")
-            self.view_teams_modal_window(teamset_to_startend_map,olap)
+
+# 
+            print(f"\n\n\nteamset to startend map -> {teamset_to_startend_map}")
+            self.view_teams_modal_window(self.teamstr_to_startend_intersection_map,olap)
+            
             
             ######################################################################################################################################            
         else:
@@ -270,15 +283,15 @@ class HomeFrame(BaseFrame):
 
 
 
-    def view_teams_modal_window(self,teamset_to_startend_map,olap):
+    def view_teams_modal_window(self,teamstr_to_startend_map,olap):
         modal_win = self.make_modal_window(title="Teams")
         scrollbar = self.addscrollbar(modal_win)
-        txt = f"Found {len(teamset_to_startend_map)} team sets with {olap} hours in common\n"
+        txt = f"Found {len(teamstr_to_startend_map)} team sets with {olap} hours in common\n"
         txtwidget = self.addtxt(modal_win,txt=txt,location=tk.LEFT,yscrlcmd=scrollbar.set,disable=False)
 
         counter = 1
         #next have to fill txt widget with teams and their common time
-        for key,val in teamset_to_startend_map.items():
+        for key,val in teamstr_to_startend_map.items():
             team_mems_strs = fxns.get_names_from_memids_tup(self.teamsets_tuple[key],self.mems_dict)
             txt = f"\nTeamSet {counter}\n"
             counter += 1

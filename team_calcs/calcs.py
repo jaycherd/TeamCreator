@@ -20,6 +20,10 @@ def check_grp3(teams: Set[List[str]], grp3: List[str]) -> List[List[str]]:
         res.add(team)
     return res
 
+def convert_intersection(intrsxn: Set[str]) -> Tuple[Tuple[str]]:
+    sorted_intrsxn = sort_intrsxn(intrsxn=intrsxn)
+    compressed_intrsxn = compress_intrsxn(sorted_intrsxn)
+    return compressed_intrsxn
 
     # team_intersected = {} #key is str(mem_id) + str(mem_id of other mems) val is result of intersection
     # for teamset in teamsets:
@@ -35,6 +39,12 @@ def check_grp3(teams: Set[List[str]], grp3: List[str]) -> List[List[str]]:
     #             intersection_res = set.intersection(*sets) #should intersect all the sets in the list at once! lit
     #             team_intersected[teamkey] = intersection_res
     # return team_intersected
+def sort_intrsxn(intrsxn: Set[str]) -> Tuple[str]:
+    sorted_intrsxn = list(intrsxn)
+    sorted_intrsxn.sort(key=lambda time: (int(time.split('-')[1]),int(time.split(':')[0]),int(time.split(':')[1].split('-')[0])))
+    #dope fxn above does this: sort by day, then by hour, then by minute! sick
+    return tuple(sorted_intrsxn)
+
 def getkey(team: Tuple[str,...]) -> str:
         currkey = ""
         for mem in team:
@@ -42,7 +52,7 @@ def getkey(team: Tuple[str,...]) -> str:
         return currkey
 
 def generate_teams(mems: List[str],grp1: List[str],grp2: List[str],grp3: List[str],
-                   team_size: int,mems_dict: Dict[int,Member],olap: float) -> Tuple[Set[Tuple[str,...]],Dict[Tuple[str,...],Set[str]]]:
+                   team_size: int,mems_dict: Dict[int,Member],olap: float) -> Tuple[Set[Tuple[str,...]],Dict[Tuple[str,...],Tuple[str,...]]]:
     teams_intersected : Dict[Tuple[str,...],Set[str]] = {}
     def check_team(team: Tuple[str,...],mems_dict: Dict[int,Member],olap: float) -> bool:
         avails = set()
@@ -53,7 +63,7 @@ def generate_teams(mems: List[str],grp1: List[str],grp2: List[str],grp3: List[st
         if len(common_avails) < olap*60:
             return False
         nonlocal teams_intersected
-        teams_intersected[getkey(team)] = common_avails
+        teams_intersected[getkey(team)] = convert_intersection(common_avails)
         return True
     teams = set()
     grp2_and_grp3 = grp2 + grp3
@@ -149,12 +159,6 @@ def find_teams_w_olap(teams_intersected_map: Dict[str,Set[str]],mems_dict: Dict[
         val_teamsets.append(teamset_id)
     return tuple(val_teamsets)
 
-def sort_intrsxn(intrsxn: Set[str]) -> Tuple[str]:
-    sorted_intrsxn = list(intrsxn)
-    sorted_intrsxn.sort(key=lambda time: (int(time.split('-')[1]),int(time.split(':')[0]),int(time.split(':')[1].split('-')[0])))
-    #dope fxn above does this: sort by day, then by hour, then by minute! sick
-    return tuple(sorted_intrsxn)
-
 def compress_intrsxn(sorted_intrsxn: Tuple[str]) -> Tuple[Tuple[str]]:
     starts,ends = [], []
     starts.append(sorted_intrsxn[0])
@@ -173,11 +177,6 @@ def compress_intrsxn(sorted_intrsxn: Tuple[str]) -> Tuple[Tuple[str]]:
             starts.append(next_str)
     ends.append(sorted_intrsxn[-1])
     return (tuple(starts),tuple(ends))
-
-def convert_intersection(intrsxn: Set[str]) -> Tuple[Tuple[str]]:
-    sorted_intrsxn = sort_intrsxn(intrsxn=intrsxn)
-    compressed_intrsxn = compress_intrsxn(sorted_intrsxn)
-    return compressed_intrsxn
 
 def convert_team_intersections(teams_intersected_map: Dict[str,Set[str]],mems_dict: Dict[int,Member], teamsets: Tuple[Tuple[Tuple[str,...],...]],teamset_ids: Tuple[int]) -> Dict[int,Tuple[Tuple[str]]]:
     #rtype: Dict[key=teamset_id,val=List[List[str]] = the common start,end avails, row = day, evencols = start olap, oddcols = end olap]
