@@ -1,6 +1,5 @@
 from datetime import datetime
 from typing import List
-from icecream import ic
 
 
 def check_avail_matrix(matrix: List[List[str]]) -> bool:

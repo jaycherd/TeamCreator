@@ -1,7 +1,6 @@
 import json
 import math
 from typing import List,Set,Tuple,Dict
-from icecream import ic
 from itertools import combinations
 from collections import Counter
 
@@ -56,7 +55,6 @@ def generate_teams(mems: List[str],grp1: List[str],grp2: List[str],grp3: List[st
                    team_size: int,mems_dict: Dict[int,Member],olap: float) -> Tuple[Set[Tuple[str,...]],Dict[Tuple[str,...],Tuple[str,...]]]:
     teams_intersected : Dict[Tuple[str,...],Set[str]] = {}
     def check_team(team: Tuple[str,...],mems_dict: Dict[int,Member],olap: float) -> bool:
-        avails = set()
         # Collect the sets of available minutes for each team member
         sets_of_avails : List[Set[str]] = [mems_dict[int(mem_id)].available_minutes for mem_id in team]
         # Use set.intersection to find the common availability

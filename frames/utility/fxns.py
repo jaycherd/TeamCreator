@@ -1,7 +1,6 @@
 from typing import List,Tuple,Optional,Dict
 from member.member import Member
 
-from icecream import ic
 
 
 def generate_grp_string(group: List[str],mems_dict: Dict[int,Member]) -> str:

@@ -4,7 +4,6 @@ import time
 from tkinter import messagebox
 from typing import List,Optional,Dict
 from threading import Thread
-from icecream import ic
 
 from utility import constants as csts
 from frames.base_frame import BaseFrame

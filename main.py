@@ -1,7 +1,6 @@
 import sys
 from typing import List,Optional
 
-from icecream import ic
 from member.member import Member
 from utility import fxns as utils
 from frames.home_frame import HomeFrame
@@ -31,12 +30,6 @@ def main():
     utils.json_from_mems(members)
 
     homefr = HomeFrame(members=members,group1=group1,group2=group2,group3=group3,mem_dict=members_dict)
-    
-
-    ic()
-
-
-
 
 
 

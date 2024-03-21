@@ -1,9 +1,5 @@
 import tkinter as tk
 
-
-import tkinter as tk
-from icecream import ic
-
 from frames.utility import frame_constants as csts
 
 

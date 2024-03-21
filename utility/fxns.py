@@ -2,7 +2,6 @@ import csv
 import json
 from typing import List,Tuple,Dict,Set
 
-from icecream import ic
 from utility import constants as csts
 from member.member import Member
 

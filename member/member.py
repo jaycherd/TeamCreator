@@ -2,7 +2,6 @@ from datetime import datetime,timedelta
 
 from member.utility import fxns as utils
 from member.utility import constants as csts
-from icecream import ic
 
 
 class Member:
