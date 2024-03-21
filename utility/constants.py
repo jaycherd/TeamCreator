@@ -10,7 +10,7 @@ MIN_HRS_OLAP = 2
 
 # the value to stop generating new sets
 # helps keep program from running super long
-NUM_SETS_TO_GEN = 100
+NUM_SETS_TO_GEN = 150
 
 # the name of the csv file
 csv_avail_fname = 'resources/availability.csv'

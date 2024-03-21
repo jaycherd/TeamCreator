@@ -218,38 +218,21 @@ class HomeFrame(BaseFrame):
             end_time = time.perf_counter() #tmp
             print(f"team/set generation took {end_time - start_time} seconds")
 
-            print(type(self.sets_of_teams))
-            print(f"set of teams -> {self.sets_of_teams}")
-
-
             # self.teamstr_to_startend_intersection_map = calcs.intersect_team_avail_mins(teamsets=self.sets_of_teams,numteams=numteams,memsper=memsper,olap=olap,members=self.members,mems_dict=self.mems_dict)
-            self.teamsets_tuple = tuple(self.sets_of_teams)
+            self.teamsets_tuple = tuple(self.sets_of_teams)            
 
-            ## left off here!
-
-            id_teamsets_w_val_olap = calcs.find_teams_w_olap(teams_intersected_map=self.teamstr_to_startend_intersection_map,mems_dict=self.mems_dict,teamsets=self.teamsets_tuple,olap=olap)
-            # id_teamsets_w_val_olap = 
-            
-
-            print(f"id teamsets with overlap -> {id_teamsets_w_val_olap}")
-            print(f"\n\n\nteam intersection map -> {self.teamstr_to_startend_intersection_map}")
-            # exit()
+            # print(f"\n\n\nteam intersection map -> {self.teamstr_to_startend_intersection_map}")
 
             """this indexes the dictionary which should no longer be necessary as all the teams that we determine
             to be valid will automatically be valid at this point because when we generate sets we only use valid teams\
             and we delete duplicates so no more checking needs to happen and we should probs skip this all together"""
-            teamset_to_startend_map = calcs.convert_team_intersections(teams_intersected_map=self.teamstr_to_startend_intersection_map,mems_dict=self.mems_dict,teamsets=self.teamsets_tuple,teamset_ids=id_teamsets_w_val_olap)
-
-            teamset_to_startend_map = calcs.convert_team_intersections(teams_intersected_map=self.teamstr_to_startend_intersection_map,mems_dict=self.mems_dict,teamsets=self.teamsets_tuple,teamset_ids=id_teamsets_w_val_olap)
-            print(f"\n\n\nteamset to startend map -> {teamset_to_startend_map}")
-            # exit()
+            teamset_to_startend_map = calcs.convert_team_intersections(teams_intersected_map=self.teamstr_to_startend_intersection_map,mems_dict=self.mems_dict,teamsets=self.teamsets_tuple)
+            # print(f"\n\nteamset to startend map -> {teamset_to_startend_map}")
 
             end_time_overall = time.perf_counter() #tmp
             print(f"all set generation fxns took {end_time_overall - start_time} seconds")
 
-# 
-            print(f"\n\n\nteamset to startend map -> {teamset_to_startend_map}")
-            self.view_teams_modal_window(self.teamstr_to_startend_intersection_map,olap)
+            self.view_teams_modal_window(teamset_to_startend_map,olap)
             
             
             ######################################################################################################################################            
@@ -307,6 +290,8 @@ class HomeFrame(BaseFrame):
             for i,team_mems_str in enumerate(team_mems_strs):
                 if i != 0:
                     txtwidget.insert(tk.END,'\n')
+                # print(f"\nteam mems str -> {team_mems_str}\nval -> {val[i]}\nval -> {val}" +
+                #       f"\nkey -> {key}")
                 txt2 = f"[{team_mems_str}]:\n{fxns.draw_start_end(val[i])}"
                 txtwidget.insert(tk.END,txt2)
             txtwidget.insert(tk.END,'\n')

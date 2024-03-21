@@ -21,7 +21,10 @@ def main():
         member = Member(name=names[prl_ptr],avail_matrix=avails[prl_ptr],priority=priorities[prl_ptr])
         members[prl_ptr] = member
         prl_ptr += 1
-    members_dict = {member.member_id: member for member in members}    
+    members_dict = {member.member_id: member for member in members}
+    # for mem in members:
+    #     print(f"name -> {mem.name}\npriority -> {mem.priority}")
+    # exit()
     # for member in members:
     #     member.print_member_attributes()
     group1, group2, group3 = utils.groups_from_mems(members)

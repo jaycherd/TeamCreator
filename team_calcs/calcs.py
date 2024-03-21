@@ -1,4 +1,5 @@
 import json
+import math
 from typing import List,Set,Tuple,Dict
 from icecream import ic
 from itertools import combinations
@@ -135,7 +136,13 @@ def generate_sets_of_teams(teams: Set[Tuple[str,...]],grp1: List[str],grp2: List
     try:
         add_team_to_set(tuple(), all_teams)
     except StopIteration:
-        print(f"Sets generated was restricted by utility/constants.py variable -> NUM_SETS_TO_GEN, set to {csts.NUM_SETS_TO_GEN}")
+        worst_case = math.comb(len(teams),num_teams)
+        print(f"Team permutations generated was restricted by " +
+              "utility/constants.py variable -> NUM_SETS_TO_GEN," +
+              f" set to {csts.NUM_SETS_TO_GEN},\nNOTE: worst case" +
+              f"{len(sets_of_teams)} teams could make {worst_case}" +
+              " permutations, which could take a long time" +
+              ", consider increasing overlap")
     
     print(f"permutations of teams -> {len(sets_of_teams)}")
     return sets_of_teams
@@ -178,7 +185,7 @@ def compress_intrsxn(sorted_intrsxn: Tuple[str]) -> Tuple[Tuple[str]]:
     ends.append(sorted_intrsxn[-1])
     return (tuple(starts),tuple(ends))
 
-def convert_team_intersections(teams_intersected_map: Dict[str,Set[str]],mems_dict: Dict[int,Member], teamsets: Tuple[Tuple[Tuple[str,...],...]],teamset_ids: Tuple[int]) -> Dict[int,Tuple[Tuple[str]]]:
+def convert_team_intersections(teams_intersected_map: Dict[str,Set[str]],mems_dict: Dict[int,Member], teamsets: Tuple[Tuple[Tuple[str,...],...]]) -> Dict[int,Tuple[Tuple[str]]]:
     #rtype: Dict[key=teamset_id,val=List[List[str]] = the common start,end avails, row = day, evencols = start olap, oddcols = end olap]
     # res_dict = {}
     # for i,(k,v) in enumerate(teams_intersected_map.items()):
@@ -186,7 +193,6 @@ def convert_team_intersections(teams_intersected_map: Dict[str,Set[str]],mems_di
     #     for team in v:
     #         # print(f"k -> {k}, type k is -> {type(k)}")
     #         # print(f"v -> {v}, type v is {type(v)}")
-    #         # exit()
     #         start_end_tup = convert_intersection(teams_intersected_map[k])
     #         start_end_tups.append(start_end_tup)
     #     res_dict[i] = tuple(start_end_tups)
@@ -205,21 +211,28 @@ def convert_team_intersections(teams_intersected_map: Dict[str,Set[str]],mems_di
     
     # print(teamsets)
     # print(teamset_ids)
-    # exit()
-
-
     res_dict = {}
-    for teamset_id in teamset_ids:
-        teams = teamsets[teamset_id]
+    for i,teamset in enumerate(teamsets):
         start_end_tups = []
-        for team in teams:
-            teamkey = getkey(team=team)
+        for team in teamset:
+            teamkey = getkey(team)
             intersxn = teams_intersected_map[teamkey]
-            start_end_tup = convert_intersection(intrsxn=intersxn)
+            start_end_tup = intersxn
             start_end_tups.append(start_end_tup)
-        res_dict[teamset_id] = tuple(start_end_tups)
-    # print(res_dict)
+        res_dict[i] = tuple(start_end_tups)
     return res_dict
+    # res_dict = {}
+    # for teamset_id in teamset_ids:
+    #     teams = teamsets[teamset_id]
+    #     start_end_tups = []
+    #     for team in teams:
+    #         teamkey = getkey(team=team)
+    #         intersxn = teams_intersected_map[teamkey]
+    #         start_end_tup = convert_intersection(intrsxn=intersxn)
+    #         start_end_tups.append(start_end_tup)
+    #     res_dict[teamset_id] = tuple(start_end_tups)
+    # # print(res_dict)
+    # return res_dict
 
 """0 = success, 1 = error"""
 def check_cmp_input(input: str,valid_names: Set[str]) -> Tuple[int,str]:
